@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36202.13 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradeManagement", "GradeManagement\GradeManagement.csproj", "{4D78D7E5-4B9A-442D-8EAC-D6B07EA486BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradeManagement.DAL", "GradeManagement.DAL\GradeManagement.DAL.csproj", "{1B9BB44D-5FA0-412A-B6A9-6F5105CAD0D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D78D7E5-4B9A-442D-8EAC-D6B07EA486BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D78D7E5-4B9A-442D-8EAC-D6B07EA486BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D78D7E5-4B9A-442D-8EAC-D6B07EA486BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D78D7E5-4B9A-442D-8EAC-D6B07EA486BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B9BB44D-5FA0-412A-B6A9-6F5105CAD0D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B9BB44D-5FA0-412A-B6A9-6F5105CAD0D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B9BB44D-5FA0-412A-B6A9-6F5105CAD0D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B9BB44D-5FA0-412A-B6A9-6F5105CAD0D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7CEE6F4A-A6A0-4F64-BD15-7C7B6A7DFC67}
+	EndGlobalSection
+EndGlobal

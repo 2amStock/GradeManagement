@@ -1,0 +1,53 @@
+﻿<Window x:Class="GradeManagement.InsertStudentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GradeManagement"
+        mc:Ignorable="d"
+        Title="Student Detail" Height="512" Width="556"  FontFamily="Arial" Loaded="Window_Loaded" >
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="28*"/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Background="#FF44FFFE" Margin="0,0,0,3" Grid.ColumnSpan="2">
+
+            <TextBlock Text="Student Information" FontSize="20" Foreground="#FFFE0000" Background="#FF72F5FF" FontWeight="Bold" Height="38"></TextBlock>
+            <Label Content="Student Name" Height="31"></Label>
+            <TextBox x:Name="txtName" Height="29"></TextBox>
+            <Label Content="Email" Height="30"></Label>
+            <TextBox x:Name="txtEmail" Height="31"></TextBox>
+            <Label Content="Rollnumber" Height="29"></Label>
+            <TextBox x:Name="txtRollNumber" Height="31"></TextBox>
+            <Label Content="Date of Birth" Height="34"></Label>
+            <DatePicker x:Name="dpDOB" Height="23"/>
+            <Label Content="Course"></Label>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Height="130">
+                <ItemsControl x:Name="lbSubjects">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="5"  Rows="9"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding Subject.SubjectId}" IsChecked="{Binding IsSelected, Mode=TwoWay}" 
+                          Margin="0,2" Width="100" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+        </StackPanel>
+
+        <Button Click="btnSave" Content="Save" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Height="32" Width="94" Margin="202,10,0,0" Grid.Column="1"/>
+
+    </Grid>
+</Window>
