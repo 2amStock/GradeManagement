@@ -50,7 +50,7 @@ namespace GradeManagement
             {
                 txtName.Text = CurrentStudent.FullName;
                 txtEmail.Text = CurrentStudent.Email;
-                dpDOB.SelectedDate = CurrentStudent.Dob.Value.ToDateTime(new TimeOnly(0, 0));
+                dpDOB.SelectedDate = CurrentStudent.Dob!.Value.ToDateTime(new TimeOnly(0, 0));
                 txtRollNumber.Text = CurrentStudent.RollNumber;
 
                 // Lấy danh sách Subjects và đánh dấu các môn học đã tham gia
@@ -111,14 +111,14 @@ namespace GradeManagement
                 {
                     FullName = txtName.Text,
                     Email = txtEmail.Text.ToLower(),
-                    Dob = DateOnly.FromDateTime(dpDOB.SelectedDate.Value),
+                    Dob = DateOnly.FromDateTime(dpDOB.SelectedDate!.Value),
                     RollNumber = txtRollNumber.Text.ToUpper()
                 };
                 _context.Students.Add(student);
                 _context.SaveChanges();
 
                
-                var selectedSubjects = _subjects.Where(s => s.IsSelected).Select(s => s.Subject.SubjectId).ToList();
+                var selectedSubjects = _subjects.Where(s => s.IsSelected).Select(s => s.Subject!.SubjectId).ToList();
                 if (selectedSubjects.Any())
                 {
                     AssignRandomCourseToStudent(student, selectedSubjects);
@@ -143,20 +143,31 @@ namespace GradeManagement
                     MessageBox.Show("Email already exists", "alert", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-                Student student = _context.Students.Where(s => s.StudentId == CurrentStudent.StudentId).FirstOrDefault();
+                Student student = _context.Students.Where(s => s.StudentId == CurrentStudent.StudentId).FirstOrDefault()!;
                 student.FullName = txtName.Text;
                 student.Email = txtEmail.Text.ToLower();
-                student.Dob = DateOnly.FromDateTime(dpDOB.SelectedDate.Value);
+                student.Dob = DateOnly.FromDateTime(dpDOB.SelectedDate!.Value);
                 student.RollNumber = txtRollNumber.Text.ToUpper();
                 _context.Students.Update(student);
                 _context.SaveChanges();
 
-                if()
+                var selectedSubjectIds = _subjects.Where(s => s.IsSelected).Select(s => s.Subject!.SubjectId).ToList();
+                UpdateCoursesForStudent(student, selectedSubjectIds);
             }
 
             StudentWindow.Refesh();
             this.Close();
             
+        }
+
+        private void UpdateCoursesForStudent(Student student, List<string> selectedSubjectIds)
+        {
+            // Xóa tất cả các khóa học hiện tại của sinh viên
+            var existingCourses = _context.StudentCourses.Where(sc => sc.StudentId == student.StudentId).ToList();
+            _context.StudentCourses.RemoveRange(existingCourses);
+            _context.SaveChanges();
+            // Gán khóa học mới cho sinh viên
+            AssignRandomCourseToStudent(student, selectedSubjectIds);
         }
         private void AssignRandomCourseToStudent(Student student, List<string> selectedSubjectIds)
         {
@@ -178,7 +189,7 @@ namespace GradeManagement
                 .Select(g => g.Key)
                 .ToList();
 
-            Course selectedCourse;
+            
             if (commonClassCodes.Any())
             {
                 var randomCommonClassCode = commonClassCodes[new Random().Next(commonClassCodes.Count)];
