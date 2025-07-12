@@ -28,11 +28,12 @@
                     <DataGridTextColumn Header="Email" Binding="{Binding Email}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Dob" Binding="{Binding Dob}"></DataGridTextColumn>
                     <DataGridTextColumn Header="RollNumber" Binding="{Binding RollNumber}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Course" Binding="{Binding ClassCodesWithSubjectId}"></DataGridTextColumn> 
+                    <DataGridTextColumn Header="Course" Binding="{Binding ClassCodesWithSubjectId}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
         <Button x:Name="btNewStudent" Grid.Column="1" Content="ADD NEW STUDENT" HorizontalAlignment="Center" Margin="0,63,0,0" VerticalAlignment="Top" Height="26" Width="136" Background="#FF749FD2" Click="Button_Click_Addnew"/>
         <TextBlock TextWrapping="Wrap" Grid.Column="1" Background="#FFE31616" TextAlignment="Center" RenderTransformOrigin="0.481,0.796" Height="26" VerticalAlignment="Top" Foreground="#FFE8F408" FontSize="18" Text="GRADE MANAGEMENT"/>
+        <Button x:Name="Bt_Grade" Grid.Column="1" Content="Grade for student" HorizontalAlignment="Center" Margin="0,138,0,0" VerticalAlignment="Top" Width="136" Height="27" Background="#FF749FD2" Click="Bt_Grade_Click"/>
     </Grid>
 </Window>

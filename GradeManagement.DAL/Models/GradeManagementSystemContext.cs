@@ -18,6 +18,14 @@ public partial class GradeManagementSystemContext : DbContext
 
     public virtual DbSet<Course> Courses { get; set; }
 
+    public virtual DbSet<Grade> Grades { get; set; }
+
+    public virtual DbSet<GradeCategory> GradeCategories { get; set; }
+
+    public virtual DbSet<GradeItem> GradeItems { get; set; }
+
+    public virtual DbSet<Mark> Marks { get; set; }
+
     public virtual DbSet<Student> Students { get; set; }
 
     public virtual DbSet<StudentCourse> StudentCourses { get; set; }
@@ -55,6 +63,79 @@ public partial class GradeManagementSystemContext : DbContext
                 .HasForeignKey(d => d.SubjectId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Course__SubjectI__3D5E1FD2");
+        });
+
+        modelBuilder.Entity<Grade>(entity =>
+        {
+            entity.HasKey(e => e.GradeId).HasName("PK__Grade__54F87A37ED3919E5");
+
+            entity.ToTable("Grade");
+
+            entity.Property(e => e.GradeId).HasColumnName("GradeID");
+            entity.Property(e => e.CourseId).HasColumnName("CourseID");
+            entity.Property(e => e.StudentId).HasColumnName("StudentID");
+
+            entity.HasOne(d => d.Course).WithMany(p => p.Grades)
+                .HasForeignKey(d => d.CourseId)
+                .HasConstraintName("FK__Grade__CourseID__2DE6D218");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.Grades)
+                .HasForeignKey(d => d.StudentId)
+                .HasConstraintName("FK__Grade__StudentID__2EDAF651");
+        });
+
+        modelBuilder.Entity<GradeCategory>(entity =>
+        {
+            entity.HasKey(e => e.GradeCategoryId).HasName("PK__GradeCat__C86CC46AD2714310");
+
+            entity.ToTable("GradeCategory");
+
+            entity.Property(e => e.GradeCategoryName)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<GradeItem>(entity =>
+        {
+            entity.HasKey(e => e.GradeItemId).HasName("PK__GradeIte__A40A4056AEA381C4");
+
+            entity.Property(e => e.GradeItemId).HasColumnName("GradeItemID");
+            entity.Property(e => e.GradeItemName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.SubjectId)
+                .HasMaxLength(7)
+                .IsUnicode(false)
+                .HasColumnName("SubjectID");
+
+            entity.HasOne(d => d.GradeCategory).WithMany(p => p.GradeItems)
+                .HasForeignKey(d => d.GradeCategoryId)
+                .HasConstraintName("FK__GradeItem__Grade__2B0A656D");
+
+            entity.HasOne(d => d.Subject).WithMany(p => p.GradeItems)
+                .HasForeignKey(d => d.SubjectId)
+                .HasConstraintName("FK_GradeItems_Subject");
+        });
+
+        modelBuilder.Entity<Mark>(entity =>
+        {
+            entity.HasKey(e => new { e.GradeId, e.GradeItemId }).HasName("PK__Mark__2EB8DE32D1D71EF7");
+
+            entity.ToTable("Mark");
+
+            entity.Property(e => e.GradeId).HasColumnName("GradeID");
+            entity.Property(e => e.GradeItemId).HasColumnName("GradeItemID");
+            entity.Property(e => e.Mark1).HasColumnName("Mark");
+
+            entity.HasOne(d => d.Grade).WithMany(p => p.Marks)
+                .HasForeignKey(d => d.GradeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Mark__GradeID__31B762FC");
+
+            entity.HasOne(d => d.GradeItem).WithMany(p => p.Marks)
+                .HasForeignKey(d => d.GradeItemId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Mark__GradeItemI__32AB8735");
         });
 
         modelBuilder.Entity<Student>(entity =>

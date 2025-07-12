@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GradeManagement.DAL.Models;
 
-public partial class StudentCourse
+public  class StudentCourse
 {
     public int StudentId { get; set; }
 

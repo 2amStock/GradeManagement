@@ -125,6 +125,13 @@ namespace GradeManagement
             dgStudents.SelectedItem = null;
             btNewStudent.Content = "ADD NEW STUDENT";
         }
+
+        private void Bt_Grade_Click(object sender, RoutedEventArgs e)
+        {
+            GradeWindow gradeWindow = new GradeWindow();
+            gradeWindow.Show();
+            this.Close();
+        }
     }
 }
 

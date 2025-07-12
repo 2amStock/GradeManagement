@@ -15,7 +15,7 @@ public partial class Student
 
     public string RollNumber { get; set; } = null!;
 
-    public virtual ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
+    public virtual ICollection<Grade> Grades { get; set; } = new List<Grade>();
 
-    
+    public virtual ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
 }
