@@ -1,5 +1,6 @@
 ﻿using GradeManagement.DAL.Models;
 using GradeManagement.DAL.ViewModels;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,7 +73,9 @@ namespace GradeManagement
             cbCategorys.SelectedValuePath = "GradeCategoryId";
             cbCategorys.DisplayMemberPath = "GradeCategoryName";
             cbCategorys.ItemsSource = _context.GradeCategories.ToList();
-            cbCourses.SelectedIndex = 0; 
+            cbCourses.SelectedIndex = 0;
+            cbSubjects.SelectedIndex = 0;
+            cbCategorys.SelectedIndex = 0;
             dgStudentGrades.SelectedItem = null;
             spGradeItemDetails.Children.Clear();
         }
@@ -80,7 +83,7 @@ namespace GradeManagement
         private void dgCourse_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             LoadGradeViewModel();
-            }
+        }
         private void LoadGradeViewModel()
         {
             if (cbCourses.SelectedItem is Course selectedCourse)
@@ -163,7 +166,7 @@ namespace GradeManagement
                     if (!selectedStudent.GradeDetails.TryGetValue(item.GradeItemId, out var gradeInfo))
                         continue;
 
-                    
+
                     var label = new Label
                     {
                         Content = $"{gradeInfo.GradeItemName} ({gradeInfo.Weight}%)",
@@ -171,7 +174,7 @@ namespace GradeManagement
                         Margin = new Thickness(0, 10, 0, 2)
                     };
 
-                    
+
                     var textbox = new TextBox
                     {
                         Text = gradeInfo.Mark?.ToString() ?? "",
@@ -180,7 +183,7 @@ namespace GradeManagement
                         Tag = item.GradeItemId
                     };
 
-                    
+
 
                     spGradeItemDetails.Children.Add(label);
                     spGradeItemDetails.Children.Add(textbox);
@@ -197,15 +200,15 @@ namespace GradeManagement
                     MessageBox.Show("No grade items to save.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                if(cbCourses.SelectedItem is Course selectedCourse == false) return;
+                if (cbCourses.SelectedItem is Course selectedCourse == false) return;
                 {
                     int courseId = selectedCourse.CourseId;
                     string subjectId = selectedCourse.SubjectId;
-                    
+
                     var grade = _context.Grades.FirstOrDefault(g => g.StudentId == selectedStudent.StudentId && g.CourseId == courseId);
-                    
+
                     var existingMarks = _context.Marks.Where(m => m.GradeId == grade!.GradeId);
-                    foreach(var child in spGradeItemDetails.Children)
+                    foreach (var child in spGradeItemDetails.Children)
                     {
                         if (child is TextBox textbox && textbox.Tag is int gradeItemId)
                         {
@@ -220,7 +223,7 @@ namespace GradeManagement
                                 return;
                             }
 
-                           
+
                             if (parsedMark < 0 || parsedMark > 10)
                             {
                                 MessageBox.Show($"The mark '{parsedMark}' is out of range (0–10). Please enter a valid value.",
@@ -229,7 +232,7 @@ namespace GradeManagement
                             }
 
                             var existingMark = existingMarks.FirstOrDefault(m => m.GradeItemId == gradeItemId);
-                            
+
                             if (existingMark != null)
                             {
                                 existingMark.Mark1 = parsedMark;
@@ -262,12 +265,40 @@ namespace GradeManagement
         private void btnRefesh_Click(object sender, RoutedEventArgs e)
         {
             Begin();
-            
+
         }
 
         private void btnAddGradeItem_Click(object sender, RoutedEventArgs e)
         {
+            if (txtGradeItemName.Text.IsNullOrEmpty() || txtWeight.Text.IsNullOrEmpty()) { MessageBox.Show("Please fill in all fields.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
 
+            if (!double.TryParse(txtWeight.Text, out double weight) || weight <= 0 || weight > 100)
+            {
+                MessageBox.Show("Trọng số thuộc khoảng 0-100", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            GradeItem newGradeItem = new GradeItem
+            {
+                GradeItemName = txtGradeItemName.Text.Trim(),
+                Weight = weight,
+                SubjectId = cbSubjects.SelectedValue as string,
+                GradeCategoryId = (int?)cbCategorys.SelectedValue
+            };
+
+            //check if the GradeItem already exists
+            if (_context.GradeItems.Any(gi => gi.GradeItemName == newGradeItem.GradeItemName && gi.SubjectId == newGradeItem.SubjectId))
+            {
+                MessageBox.Show("Điểm thành phần này đã có", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            _context.GradeItems.Add(newGradeItem);
+           
+            _context.SaveChanges();
+            dgGradeItems.ItemsSource = null;
+            dgGradeItems.ItemsSource = _context.GradeItems
+                .Where(gi => gi.SubjectId == cbSubjects.SelectedValue as string)
+                .ToList();
         }
 
         private void btnEditGradeItem_Click(object sender, RoutedEventArgs e)
@@ -279,5 +310,19 @@ namespace GradeManagement
         {
 
         }
+
+        private void cbSubjects_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbSubjects.SelectedItem is Subject selectedSubject)
+            {
+                dgGradeItems.ItemsSource = _context.GradeItems
+                    .Where(gi => gi.SubjectId == selectedSubject.SubjectId)
+                    .ToList();
+            }
+            else
+            {
+                dgGradeItems.ItemsSource = null;
+            }
+        }
     }
-    }
+}
