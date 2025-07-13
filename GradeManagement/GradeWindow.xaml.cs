@@ -359,8 +359,6 @@ namespace GradeManagement
                 dgGradeItems.ItemsSource = _context.GradeItems
                     .Where(gi => gi.SubjectId == cbSubjects.SelectedValue as string)
                     .ToList();
-
-                MessageBox.Show("Đã cập nhật điểm thành phần thành công!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
