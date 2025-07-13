@@ -214,9 +214,8 @@ namespace GradeManagement
                         if (child is TextBox textbox && textbox.Tag is int gradeItemId)
                         {
                             string rawMark = textbox.Text.Trim();
-                            if (string.IsNullOrWhiteSpace(rawMark))
-                                continue;
 
+                            
                             if (!double.TryParse(rawMark, out double parsedMark))
                             {
                                 MessageBox.Show($"Invalid input for GradeItem ID {gradeItemId}. Please enter a numeric value.",
