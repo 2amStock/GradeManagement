@@ -263,9 +263,23 @@ namespace GradeManagement
 
         }
 
+       
         private void btnRefesh_Click(object sender, RoutedEventArgs e)
         {
-            Begin();
+            cbCourses.SelectedValuePath = "CourseId";
+            cbCourses.DisplayMemberPath = "DisplayName";
+            cbCourses.ItemsSource = _context.Courses.ToList();
+            cbSubjects.SelectedValuePath = "SubjectId";
+            cbSubjects.DisplayMemberPath = "SubjectId";
+            cbSubjects.ItemsSource = _context.Subjects.ToList();
+            cbCategorys.SelectedValuePath = "GradeCategoryId";
+            cbCategorys.DisplayMemberPath = "GradeCategoryName";
+            cbCategorys.ItemsSource = _context.GradeCategories.ToList();
+           
+            dgStudentGrades.SelectedItem = null;
+            dgGradeItems.SelectedItem = null;
+            spGradeItemDetails.Children.Clear();
+            LoadGradeViewModel();
 
         }
 
@@ -334,7 +348,37 @@ namespace GradeManagement
 
         private void btnDeleteGradeItem_Click(object sender, RoutedEventArgs e)
         {
+            if (dgGradeItems.SelectedItem is GradeItem selectedGradeItem)
+            {
+                    var confirmResult = MessageBox.Show("Bạn có chắc chắn muốn xóa điểm thành phần này không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (confirmResult == MessageBoxResult.Yes)
+                    {
+                    var itemToDelete = _context.GradeItems.FirstOrDefault(g => g.GradeItemId == selectedGradeItem.GradeItemId);
+                    if (itemToDelete == null)
+                    {
+                        MessageBox.Show("Không tìm thấy GradeItem.");
+                        return;
+                    }
 
+                    // Xóa thủ công các bản ghi Mark liên quan
+                    var relatedMarks = _context.Marks.Where(m => m.GradeItemId == selectedGradeItem.GradeItemId).ToList();
+                    _context.Marks.RemoveRange(relatedMarks);
+
+                    // Sau đó mới xóa GradeItem
+                    _context.GradeItems.Remove(itemToDelete);
+                    _context.SaveChanges();
+
+                    MessageBox.Show("Đã xóa GradeItem thành công.");
+                    dgGradeItems.ItemsSource = _context.GradeItems
+                            .Where(gi => gi.SubjectId == cbSubjects.SelectedValue as string)
+                            .ToList();
+                        ClearGradeItemFields();
+                    }
+            }
+            else
+            {
+                MessageBox.Show("Hãy chọn một điểm thành phần để xóa!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void cbSubjects_SelectionChanged(object sender, SelectionChangedEventArgs e)
