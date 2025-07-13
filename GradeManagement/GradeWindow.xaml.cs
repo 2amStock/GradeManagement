@@ -66,6 +66,12 @@ namespace GradeManagement
             cbCourses.SelectedValuePath = "CourseId";
             cbCourses.DisplayMemberPath = "DisplayName";
             cbCourses.ItemsSource = _context.Courses.ToList();
+            cbSubjects.SelectedValuePath = "SubjectId";
+            cbSubjects.DisplayMemberPath = "SubjectId";
+            cbSubjects.ItemsSource = _context.Subjects.ToList();
+            cbCategorys.SelectedValuePath = "GradeCategoryId";
+            cbCategorys.DisplayMemberPath = "GradeCategoryName";
+            cbCategorys.ItemsSource = _context.GradeCategories.ToList();
             cbCourses.SelectedIndex = 0; 
             dgStudentGrades.SelectedItem = null;
             spGradeItemDetails.Children.Clear();

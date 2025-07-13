@@ -7,35 +7,92 @@
         mc:Ignorable="d"
         Title="GradeWindow" Height="450" Width="800" WindowStyle="SingleBorderWindow" WindowState="Maximized" Loaded="Window_Loaded">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="559*"></ColumnDefinition>
-            <ColumnDefinition Width="241*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        
-            <StackPanel>
-            <ComboBox x:Name="cbCourses" SelectionChanged="dgCourse_SelectionChanged">
-                
-            </ComboBox>
-            <DataGrid x:Name="dgStudentGrades" AutoGenerateColumns="False" SelectionMode="Single" IsReadOnly="True" SelectionChanged="dgStudentGrades_SelectionChanged">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Width="100" Header="FullName" Binding="{Binding FullName }" ></DataGridTextColumn>
-                    <DataGridTextColumn Width="100" Header="RollNumber" Binding="{Binding RollNumber}"></DataGridTextColumn>
-                    
-                </DataGrid.Columns>
-            </DataGrid>
-        </StackPanel>
-        <StackPanel Grid.Column="1"  >
-            
+        <TabControl x:Name="tabControl" Margin="10">
 
-            <TextBlock Text="Grade Details" FontSize="20" Width="240" Height="31" TextAlignment="Center" Background="#FF82C3FE"/>
-            <StackPanel x:Name="spGradeItemDetails" Margin="10" >
-                <!-- Các Label + TextBox sẽ được thêm động ở đây -->
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                <Button x:Name="btnSave" Content="Save" Width="69" Height="30"  Background="#FFF11010" Margin="0,0,10,0" Click="btnSave_Click"/>
-                <Button x:Name="btnRefesh" Content="Refesh" Width="69" Height="30"  Background="#FF14F1F1" Click="btnRefesh_Click"/>
+            <TabItem Header="Chấm điểm">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="559*"></ColumnDefinition>
+                        <ColumnDefinition Width="241*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
 
-            </StackPanel>
-        </StackPanel>
+                    <StackPanel>
+                        <ComboBox x:Name="cbCourses" SelectionChanged="dgCourse_SelectionChanged">
+
+                        </ComboBox>
+                        <DataGrid x:Name="dgStudentGrades" AutoGenerateColumns="False" SelectionMode="Single" IsReadOnly="True" SelectionChanged="dgStudentGrades_SelectionChanged">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="100" Header="FullName" Binding="{Binding FullName }" ></DataGridTextColumn>
+                                <DataGridTextColumn Width="100" Header="RollNumber" Binding="{Binding RollNumber}"></DataGridTextColumn>
+
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1"  >
+
+
+                        <TextBlock Text="Grade Details" FontSize="20" Width="240" Height="31" TextAlignment="Center" Background="#FF82C3FE"/>
+                        <StackPanel x:Name="spGradeItemDetails" Margin="10" >
+                            <!-- Các Label + TextBox sẽ được thêm động ở đây -->
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                            <Button x:Name="btnSave" Content="Save" Width="69" Height="30"  Background="#FFF11010" Margin="0,0,10,0" Click="btnSave_Click"/>
+                            <Button x:Name="btnRefesh" Content="Refesh" Width="69" Height="30"  Background="#FF14F1F1" Click="btnRefesh_Click"/>
+
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 2: Thêm GradeItem -->
+            <TabItem Header="Quản lý GradeItem">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Vertical" Margin="0 0 0 10">
+                        <TextBlock Text="Môn học (Subject):"/>
+                        <ComboBox x:Name="cbSubjects"  Width="300"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Grid.Row="1" Margin="0 0 0 10">
+                        <TextBlock Text="Loại điểm (GradeCategory):"/>
+                        <ComboBox x:Name="cbCategorys" Width="300"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Grid.Row="2" Margin="0 0 0 10">
+                        <TextBlock Text="Tên GradeItem:"/>
+                        <TextBox x:Name="txtGradeItemName" Width="300"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Grid.Row="3" Margin="0 0 0 10">
+                        <TextBlock Text="Trọng số (%):"/>
+                        <TextBox x:Name="txtWeight" Width="300"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="4" VerticalAlignment="Top">
+                        <Button Content="Thêm" x:Name="btnAddGradeItem" Width="120" Margin="0 0 10 0"/>
+                        <Button Content="Sửa" x:Name="btnEditGradeItem" Width="120" Margin="0 0 10 0"/>
+                        <Button Content="Xóa" x:Name="btnDeleteGradeItem" Width="120" Margin="0 0 10 0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Margin="0 13 0 0">
+                        <DataGrid x:Name="dgGradeItems" AutoGenerateColumns="False" Margin="0 10 0 0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Môn học" Binding="{Binding SubjectName}" Width="*"/>
+                                <DataGridTextColumn Header="Loại điểm" Binding="{Binding CategoryName}" Width="*"/>
+                                <DataGridTextColumn Header="Tên GradeItem" Binding="{Binding Name}" Width="*"/>
+                                <DataGridTextColumn Header="Trọng số (%)" Binding="{Binding Weight}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid> 
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
     </Grid>
 </Window>
