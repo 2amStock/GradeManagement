@@ -77,6 +77,7 @@ namespace GradeManagement
             cbSubjects.SelectedIndex = 0;
             cbCategorys.SelectedIndex = 0;
             dgStudentGrades.SelectedItem = null;
+            dgGradeItems.SelectedItem = null;
             spGradeItemDetails.Children.Clear();
         }
 
@@ -270,7 +271,7 @@ namespace GradeManagement
 
         private void btnAddGradeItem_Click(object sender, RoutedEventArgs e)
         {
-            if (txtGradeItemName.Text.IsNullOrEmpty() || txtWeight.Text.IsNullOrEmpty()) { MessageBox.Show("Please fill in all fields.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+            if (txtGradeItemName.Text.IsNullOrEmpty() || txtWeight.Text.IsNullOrEmpty()) { MessageBox.Show("Hãy nhập đầy đủ thông tin!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
 
             if (!double.TryParse(txtWeight.Text, out double weight) || weight <= 0 || weight > 100)
             {
@@ -289,7 +290,7 @@ namespace GradeManagement
             //check if the GradeItem already exists
             if (_context.GradeItems.Any(gi => gi.GradeItemName == newGradeItem.GradeItemName && gi.SubjectId == newGradeItem.SubjectId))
             {
-                MessageBox.Show("Điểm thành phần này đã có", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Điểm thành phần này đã tồn tại!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             _context.GradeItems.Add(newGradeItem);
@@ -303,7 +304,32 @@ namespace GradeManagement
 
         private void btnEditGradeItem_Click(object sender, RoutedEventArgs e)
         {
-
+            if (dgGradeItems.SelectedItem is GradeItem selectedGradeItem)
+            {
+                if (string.IsNullOrWhiteSpace(txtGradeItemName.Text) || string.IsNullOrWhiteSpace(txtWeight.Text))
+                {
+                    MessageBox.Show("Hãy nhập đầy đủ thông tin!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (!double.TryParse(txtWeight.Text, out double weight) || weight <= 0 || weight > 100)
+                {
+                    MessageBox.Show("Trọng số thuộc khoảng 0-100", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                selectedGradeItem.GradeItemName = txtGradeItemName.Text.Trim();
+                selectedGradeItem.Weight = weight;
+                selectedGradeItem.SubjectId = cbSubjects.SelectedValue as string;
+                selectedGradeItem.GradeCategoryId = (int?)cbCategorys.SelectedValue;
+                _context.SaveChanges();
+                ClearGradeItemFields();
+                dgGradeItems.ItemsSource = _context.GradeItems
+                    .Where(gi => gi.SubjectId == cbSubjects.SelectedValue as string)
+                    .ToList();
+            }
+            else
+            {
+                MessageBox.Show("Hãy chọn một điểm thành phần để chỉnh sửa!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void btnDeleteGradeItem_Click(object sender, RoutedEventArgs e)
@@ -323,6 +349,31 @@ namespace GradeManagement
             {
                 dgGradeItems.ItemsSource = null;
             }
+        }
+
+        private void dgGradeItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dgGradeItems.SelectedItem is GradeItem selectedGradeItem)
+            {
+                txtGradeItemName.Text = selectedGradeItem.GradeItemName;
+                txtWeight.Text = selectedGradeItem.Weight.ToString();
+                cbCategorys.SelectedValue = selectedGradeItem.GradeCategoryId;
+                cbSubjects.SelectedValue = selectedGradeItem.SubjectId;
+                cbSubjects.IsEnabled = false;
+            }
+           
+        }
+
+        public void ClearGradeItemFields()
+        {
+            txtGradeItemName.Text = string.Empty;
+            txtWeight.Text = string.Empty;           
+            cbSubjects.IsEnabled = true;
+        }
+        private void btnRefeshGradeItem_Click(object sender, RoutedEventArgs e)
+        {
+            ClearGradeItemFields();
+            
         }
     }
 }

@@ -79,9 +79,10 @@
                         <Button Content="Thêm" x:Name="btnAddGradeItem" Click="btnAddGradeItem_Click" Width="120" Margin="0 0 10 0"/>
                         <Button Content="Sửa" x:Name="btnEditGradeItem" Click="btnEditGradeItem_Click" Width="120" Margin="0 0 10 0"/>
                         <Button Content="Xóa" x:Name="btnDeleteGradeItem" Click="btnDeleteGradeItem_Click" Width="120" Margin="0 0 10 0"/>
+                        <Button Content="Làm mới" x:Name="btnRefeshGradeItem" Click="btnRefeshGradeItem_Click"  Width="120" Margin="0 0 10 0"/>
                     </StackPanel>
                     <StackPanel Grid.Row="4" Margin="0 13 0 0">
-                        <DataGrid SelectionMode="Single" IsReadOnly="True" x:Name="dgGradeItems" AutoGenerateColumns="False" Margin="0 10 0 0">
+                        <DataGrid SelectionMode="Single" IsReadOnly="True" x:Name="dgGradeItems" AutoGenerateColumns="False" Margin="0 10 0 0" SelectionChanged="dgGradeItems_SelectionChanged">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Môn học" Binding="{Binding SubjectId}" Width="*"/>
                                 <DataGridTextColumn Header="Loại điểm" Binding="{Binding GradeCategory.GradeCategoryName}" Width="*"/>
