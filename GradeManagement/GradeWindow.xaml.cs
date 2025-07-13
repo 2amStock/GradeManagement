@@ -30,6 +30,21 @@ namespace GradeManagement
             _context = new GradeManagementSystemContext();
         }
 
+        private bool isWindowLoaded = false;
+        private bool hasVisitedGradeTabOnce = false;
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            isWindowLoaded = true;
+            Begin(); // Chỉ load dữ liệu một lần khi khởi động
+        }
+
+        private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+        }
+
+
 
 
         private void GenerateGradeItemColumns(List<GradeItem> gradeItems)
@@ -57,10 +72,7 @@ namespace GradeManagement
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            Begin();
-        }
+        
 
         public void Begin()
         {
@@ -78,10 +90,11 @@ namespace GradeManagement
             cbCategorys.SelectedIndex = 0;
             dgStudentGrades.SelectedItem = null;
             dgGradeItems.SelectedItem = null;
-            spGradeItemDetails.Children.Clear();
+           
+
         }
 
-        private void dgCourse_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cbCourse_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             LoadGradeViewModel();
         }
@@ -96,7 +109,7 @@ namespace GradeManagement
 
 
                 GradeItems = _context.GradeItems
-                    .Where(gi => gi.SubjectId == subjectId)
+                    .Where(gi => gi.SubjectId == subjectId).OrderBy(gi => gi.Weight)
                     .ToList();
 
                 var Students = _context.StudentCourses
@@ -215,7 +228,9 @@ namespace GradeManagement
                         {
                             string rawMark = textbox.Text.Trim();
 
-                            
+                            if (string.IsNullOrWhiteSpace(rawMark))
+                                continue;
+
                             if (!double.TryParse(rawMark, out double parsedMark))
                             {
                                 MessageBox.Show($"Invalid input for GradeItem ID {gradeItemId}. Please enter a numeric value.",
@@ -262,8 +277,7 @@ namespace GradeManagement
 
         }
 
-       
-        private void btnRefesh_Click(object sender, RoutedEventArgs e)
+        private void RefeshGradeTabs()
         {
             cbCourses.SelectedValuePath = "CourseId";
             cbCourses.DisplayMemberPath = "DisplayName";
@@ -274,11 +288,16 @@ namespace GradeManagement
             cbCategorys.SelectedValuePath = "GradeCategoryId";
             cbCategorys.DisplayMemberPath = "GradeCategoryName";
             cbCategorys.ItemsSource = _context.GradeCategories.ToList();
-           
+
             dgStudentGrades.SelectedItem = null;
             dgGradeItems.SelectedItem = null;
             spGradeItemDetails.Children.Clear();
             LoadGradeViewModel();
+
+        }
+        private void btnRefesh_Click(object sender, RoutedEventArgs e)
+        {
+         RefeshGradeTabs();
 
         }
 
@@ -307,12 +326,14 @@ namespace GradeManagement
                 return;
             }
             _context.GradeItems.Add(newGradeItem);
-           
+
             _context.SaveChanges();
             dgGradeItems.ItemsSource = null;
             dgGradeItems.ItemsSource = _context.GradeItems
                 .Where(gi => gi.SubjectId == cbSubjects.SelectedValue as string)
                 .ToList();
+            ClearGradeItemFields();
+            MessageBox.Show("Đã thêm điểm thành phần thành công!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void btnEditGradeItem_Click(object sender, RoutedEventArgs e)
@@ -338,6 +359,8 @@ namespace GradeManagement
                 dgGradeItems.ItemsSource = _context.GradeItems
                     .Where(gi => gi.SubjectId == cbSubjects.SelectedValue as string)
                     .ToList();
+
+                MessageBox.Show("Đã cập nhật điểm thành phần thành công!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
@@ -349,9 +372,9 @@ namespace GradeManagement
         {
             if (dgGradeItems.SelectedItem is GradeItem selectedGradeItem)
             {
-                    var confirmResult = MessageBox.Show("Bạn có chắc chắn muốn xóa điểm thành phần này không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (confirmResult == MessageBoxResult.Yes)
-                    {
+                var confirmResult = MessageBox.Show("Bạn có chắc chắn muốn xóa điểm thành phần này không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (confirmResult == MessageBoxResult.Yes)
+                {
                     var itemToDelete = _context.GradeItems.FirstOrDefault(g => g.GradeItemId == selectedGradeItem.GradeItemId);
                     if (itemToDelete == null)
                     {
@@ -371,8 +394,8 @@ namespace GradeManagement
                     dgGradeItems.ItemsSource = _context.GradeItems
                             .Where(gi => gi.SubjectId == cbSubjects.SelectedValue as string)
                             .ToList();
-                        ClearGradeItemFields();
-                    }
+                    ClearGradeItemFields();
+                }
             }
             else
             {
@@ -404,19 +427,21 @@ namespace GradeManagement
                 cbSubjects.SelectedValue = selectedGradeItem.SubjectId;
                 cbSubjects.IsEnabled = false;
             }
-           
+
         }
 
         public void ClearGradeItemFields()
         {
             txtGradeItemName.Text = string.Empty;
-            txtWeight.Text = string.Empty;           
+            txtWeight.Text = string.Empty;
             cbSubjects.IsEnabled = true;
         }
         private void btnRefeshGradeItem_Click(object sender, RoutedEventArgs e)
         {
             ClearGradeItemFields();
-            
+
         }
+
+        
     }
 }

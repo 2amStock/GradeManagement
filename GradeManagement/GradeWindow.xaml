@@ -7,9 +7,9 @@
         mc:Ignorable="d"
         Title="GradeWindow" Height="450" Width="800" WindowStyle="SingleBorderWindow" WindowState="Maximized" Loaded="Window_Loaded">
     <Grid>
-        <TabControl x:Name="tabControl" Margin="10">
+        <TabControl x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged" Margin="10">
 
-            <TabItem Header="Chấm điểm">
+            <TabItem Header="Quản lý điểm">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="559*"></ColumnDefinition>
@@ -17,7 +17,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel>
-                        <ComboBox x:Name="cbCourses" SelectionChanged="dgCourse_SelectionChanged">
+                        <ComboBox x:Name="cbCourses" SelectionChanged="cbCourse_SelectionChanged">
 
                         </ComboBox>
                         <DataGrid x:Name="dgStudentGrades" AutoGenerateColumns="False" SelectionMode="Single" IsReadOnly="True" SelectionChanged="dgStudentGrades_SelectionChanged">
