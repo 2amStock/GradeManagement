@@ -30,20 +30,35 @@ namespace GradeManagement
             _context = new GradeManagementSystemContext();
         }
 
-        private bool isWindowLoaded = false;
-        private bool hasVisitedGradeTabOnce = false;
+
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            isWindowLoaded = true;
-            Begin(); // Chỉ load dữ liệu một lần khi khởi động
+
+            Begin(); 
+
         }
+
+       
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+            if (e.Source is TabControl && tabControl.SelectedItem is TabItem selectedTab)
+            {
+                if (selectedTab.Header.ToString() == "Quản lý điểm")
+                {
+                    RefeshGradeTabs();
+                }
+            }
+            if(e.Source is TabControl && tabControl.SelectedItem is TabItem selectedTab2)
+            {
+                if (selectedTab2.Header.ToString() == "Quản lý điểm thành phần")
+                {
+                    
+                    ClearGradeItemFields();
+                }
+            }
         }
-
 
 
 
@@ -72,7 +87,7 @@ namespace GradeManagement
             }
         }
 
-        
+
 
         public void Begin()
         {
@@ -90,8 +105,8 @@ namespace GradeManagement
             cbCategorys.SelectedIndex = 0;
             dgStudentGrades.SelectedItem = null;
             dgGradeItems.SelectedItem = null;
-           
 
+            LoadGradeViewModel();
         }
 
         private void cbCourse_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -167,12 +182,19 @@ namespace GradeManagement
                 dgStudentGrades.ItemsSource = StudentVMs;
                 GenerateGradeItemColumns(GradeItems);
             }
+            else
+            {
+                
+                return;
+            }
         }
 
         private void dgStudentGrades_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+
             if (dgStudentGrades.SelectedItem is GradeViewModel selectedStudent)
             {
+
                 spGradeItemDetails.Children.Clear();
 
                 foreach (var item in GradeItems)
@@ -214,12 +236,13 @@ namespace GradeManagement
                     MessageBox.Show("No grade items to save.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+
                 if (cbCourses.SelectedItem is Course selectedCourse == false) return;
                 {
                     int courseId = selectedCourse.CourseId;
                     string subjectId = selectedCourse.SubjectId;
 
-                    var grade = _context.Grades.FirstOrDefault(g => g.StudentId == selectedStudent.StudentId && g.CourseId == courseId);
+                    var grade = _context.Grades.FirstOrDefault(g => g.StudentId == selectedStudent!.StudentId && g.CourseId == courseId);
 
                     var existingMarks = _context.Marks.Where(m => m.GradeId == grade!.GradeId);
                     foreach (var child in spGradeItemDetails.Children)
@@ -267,12 +290,18 @@ namespace GradeManagement
 
                     _context.SaveChanges();
                     MessageBox.Show("Grades saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
                     LoadGradeViewModel();
 
                 }
 
 
 
+            }
+            else
+            {
+                MessageBox.Show("Please select a student to save grades.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
 
         }
@@ -288,7 +317,7 @@ namespace GradeManagement
             cbCategorys.SelectedValuePath = "GradeCategoryId";
             cbCategorys.DisplayMemberPath = "GradeCategoryName";
             cbCategorys.ItemsSource = _context.GradeCategories.ToList();
-
+            
             dgStudentGrades.SelectedItem = null;
             dgGradeItems.SelectedItem = null;
             spGradeItemDetails.Children.Clear();
@@ -297,7 +326,7 @@ namespace GradeManagement
         }
         private void btnRefesh_Click(object sender, RoutedEventArgs e)
         {
-         RefeshGradeTabs();
+            RefeshGradeTabs();
 
         }
 
@@ -355,6 +384,7 @@ namespace GradeManagement
                 selectedGradeItem.SubjectId = cbSubjects.SelectedValue as string;
                 selectedGradeItem.GradeCategoryId = (int?)cbCategorys.SelectedValue;
                 _context.SaveChanges();
+                cbSubjects.IsEnabled = true;
                 ClearGradeItemFields();
                 dgGradeItems.ItemsSource = _context.GradeItems
                     .Where(gi => gi.SubjectId == cbSubjects.SelectedValue as string)
@@ -392,6 +422,7 @@ namespace GradeManagement
                     dgGradeItems.ItemsSource = _context.GradeItems
                             .Where(gi => gi.SubjectId == cbSubjects.SelectedValue as string)
                             .ToList();
+                    
                     ClearGradeItemFields();
                 }
             }
@@ -432,7 +463,8 @@ namespace GradeManagement
         {
             txtGradeItemName.Text = string.Empty;
             txtWeight.Text = string.Empty;
-            cbSubjects.IsEnabled = true;
+            
+            dgGradeItems.SelectedItem = null;
         }
         private void btnRefeshGradeItem_Click(object sender, RoutedEventArgs e)
         {
@@ -440,6 +472,6 @@ namespace GradeManagement
 
         }
 
-        
+
     }
 }

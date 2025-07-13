@@ -45,7 +45,7 @@
             </TabItem>
 
             <!-- TAB 2: Thêm GradeItem -->
-            <TabItem Header="Quản lý GradeItem">
+            <TabItem Header="Quản lý điểm thành phần">
                 <Grid Margin="20">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
