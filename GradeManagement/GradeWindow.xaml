@@ -76,9 +76,9 @@
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="4" VerticalAlignment="Top">
-                        <Button Content="Thêm" x:Name="btnAddGradeItem" Width="120" Margin="0 0 10 0"/>
-                        <Button Content="Sửa" x:Name="btnEditGradeItem" Width="120" Margin="0 0 10 0"/>
-                        <Button Content="Xóa" x:Name="btnDeleteGradeItem" Width="120" Margin="0 0 10 0"/>
+                        <Button Content="Thêm" x:Name="btnAddGradeItem" Click="btnAddGradeItem_Click" Width="120" Margin="0 0 10 0"/>
+                        <Button Content="Sửa" x:Name="btnEditGradeItem" Click="btnEditGradeItem_Click" Width="120" Margin="0 0 10 0"/>
+                        <Button Content="Xóa" x:Name="btnDeleteGradeItem" Click="btnDeleteGradeItem_Click" Width="120" Margin="0 0 10 0"/>
                     </StackPanel>
                     <StackPanel Grid.Row="4" Margin="0 13 0 0">
                         <DataGrid x:Name="dgGradeItems" AutoGenerateColumns="False" Margin="0 10 0 0">

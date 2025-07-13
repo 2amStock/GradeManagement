@@ -264,5 +264,20 @@ namespace GradeManagement
             Begin();
             
         }
+
+        private void btnAddGradeItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnEditGradeItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnDeleteGradeItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
     }
