@@ -96,7 +96,7 @@ namespace GradeManagement
 
 
                 GradeItems = _context.GradeItems
-                    .Where(gi => gi.SubjectId == subjectId)
+                    .Where(gi => gi.SubjectId == subjectId).OrderBy(gi => gi.Weight)
                     .ToList();
 
                 var Students = _context.StudentCourses
@@ -313,6 +313,8 @@ namespace GradeManagement
             dgGradeItems.ItemsSource = _context.GradeItems
                 .Where(gi => gi.SubjectId == cbSubjects.SelectedValue as string)
                 .ToList();
+            ClearGradeItemFields();
+            MessageBox.Show("Đã thêm điểm thành phần thành công!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void btnEditGradeItem_Click(object sender, RoutedEventArgs e)
@@ -338,6 +340,8 @@ namespace GradeManagement
                 dgGradeItems.ItemsSource = _context.GradeItems
                     .Where(gi => gi.SubjectId == cbSubjects.SelectedValue as string)
                     .ToList();
+                
+                MessageBox.Show("Đã cập nhật điểm thành phần thành công!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
