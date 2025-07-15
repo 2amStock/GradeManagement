@@ -24,5 +24,7 @@ public partial class Course
     public virtual ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
 
     public virtual Subject Subject { get; set; } = null!;
+
+    
     public string DisplayName => $"{ClassCode} - {SubjectId}";
 }

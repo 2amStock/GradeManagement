@@ -112,12 +112,12 @@
 
                     <DataGrid x:Name="dgCourses" Grid.Row="1" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="CourseID" Binding="{Binding CourseID}" Width="Auto"/>
+                            <DataGridTextColumn Header="CourseID" Binding="{Binding CourseId}" Width="Auto"/>
                             <DataGridTextColumn Header="ClassCode" Binding="{Binding ClassCode}" Width="*"/>
-                            <DataGridTextColumn Header="SubjectID" Binding="{Binding SubjectID}" Width="*"/>
+                            <DataGridTextColumn Header="SubjectID" Binding="{Binding SubjectId}" Width="*"/>
                             <DataGridTextColumn Header="StartDate" Binding="{Binding StartDate, StringFormat={}{0:dd/MM/yyyy}}" Width="*"/>
                             <DataGridTextColumn Header="EndDate" Binding="{Binding EndDate, StringFormat={}{0:dd/MM/yyyy}}" Width="*"/>
-                            <DataGridTextColumn Header="LecturerID" Binding="{Binding LecturerID}" Width="*"/>
+                            <DataGridTextColumn Header="Lecturer Name" Binding="{Binding Lecturer.FullName}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
 

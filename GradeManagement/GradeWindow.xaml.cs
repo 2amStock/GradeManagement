@@ -1,5 +1,6 @@
 ﻿using GradeManagement.DAL.Models;
 using GradeManagement.DAL.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Win32;
 using System;
@@ -109,6 +110,14 @@ namespace GradeManagement
             dgGradeItems.SelectedItem = null;
 
             LoadGradeViewModel();
+            LoadDgCourses();
+        }
+
+        private void LoadDgCourses()
+        {
+           
+            dgCourses.ItemsSource = _context.Courses.Include(c => c.Lecturer).ToList();
+           
         }
 
         private void cbCourse_SelectionChanged(object sender, SelectionChangedEventArgs e)
