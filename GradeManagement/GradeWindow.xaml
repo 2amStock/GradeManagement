@@ -206,18 +206,18 @@
                     </StackPanel>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10">
                         <Button Content="Thêm giáo viên" Width="120" Margin="5" Click="ButtonAddLecturer_Click" />
-                        <Button Content="Sửa giáo viên" Width="120" Margin="5" />
+                        <Button Content="Sửa giáo viên" Width="120" Margin="5"  Click="ButtonUpdateLecturer_Click"/>
                         <Button Content="Xóa giáo viên" Width="120" Margin="5" />
                     </StackPanel>
 
-                    <DataGrid x:Name="dgLecturers" Grid.Row="2" Grid.ColumnSpan="2" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
+                    <DataGrid x:Name="dgLecturers" Grid.Row="2" Grid.ColumnSpan="2" Margin="10" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionChanged="dgLecturers_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="UserID" Binding="{Binding UserId}" Width="Auto"/>
                             <DataGridTextColumn Header="FullName" Binding="{Binding FullName}" Width="2*"/>
                             <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
                             <DataGridTextColumn Header="Phone" Binding="{Binding PhoneNumber}" Width="*"/>
                             <DataGridTextColumn Header="BirthDate" Binding="{Binding Birthdate, StringFormat={}{0:dd/MM/yyyy}}" Width="*"/>
-                            <DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="*"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
 

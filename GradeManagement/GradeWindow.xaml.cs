@@ -657,12 +657,105 @@ namespace GradeManagement
                 PhoneNumber = txtLecturerPhone.Text.Trim(),
                 Birthdate = DateOnly.FromDateTime(dpLecturerBirthDate.SelectedDate!.Value),
                 Role = "lecturer",
-                PasswordHash = "123456"
+                PasswordHash = "123456",
+                Status = "Hoạt động"
             };
 
             _context.UserAccounts.Add(newLecturer);
             _context.SaveChanges();
             LoadLecturers();
+            ClearLecturerFields();
+        }
+
+        private void dgLecturers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dgLecturers.SelectedItem is UserAccount selectedLecturer)
+            {
+                txtLecturerName.Text = selectedLecturer.FullName;
+                txtLecturerEmail.Text = selectedLecturer.Email;
+                txtLecturerPhone.Text = selectedLecturer.PhoneNumber;
+                dpLecturerBirthDate.SelectedDate = selectedLecturer.Birthdate.HasValue
+                    ? selectedLecturer.Birthdate.Value.ToDateTime(new TimeOnly(0, 0))
+                    : null;
+            }
+            else
+            {
+                txtLecturerName.Text = string.Empty;
+                txtLecturerEmail.Text = string.Empty;
+                txtLecturerPhone.Text = string.Empty;
+                dpLecturerBirthDate.SelectedDate = null;
+            }
+        }
+
+        private void ClearLecturerFields()
+        {
+            txtLecturerName.Text = string.Empty;
+            txtLecturerEmail.Text = string.Empty;
+            txtLecturerPhone.Text = string.Empty;
+            dpLecturerBirthDate.SelectedDate = null;
+            dgLecturers.SelectedItem = null;
+        }
+
+        private void ButtonUpdateLecturer_Click(object sender, RoutedEventArgs e)
+        {
+            if(dgLecturers.SelectedItem is UserAccount selectedUser)
+            {
+                if (string.IsNullOrWhiteSpace(txtLecturerName.Text) || string.IsNullOrWhiteSpace(txtLecturerEmail.Text) || string.IsNullOrWhiteSpace(txtLecturerPhone.Text) || !dpLecturerBirthDate.SelectedDate.HasValue)
+                {
+                    MessageBox.Show("Hãy nhập đầy đủ thông tin giảng viên!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (txtLecturerPhone.Text.Length < 10 || txtLecturerPhone.Text.Length > 11)
+                {
+                    MessageBox.Show("Số điện thoại phải có độ dài từ 10 đến 11 ký tự!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (txtLecturerName.Text.Any(c => !char.IsLetter(c) && c != ' '))
+                {
+                    MessageBox.Show("Tên giảng viên chỉ được chứa các chữ cái và khoảng trắng!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (!txtLecturerPhone.Text.StartsWith("0"))
+                {
+                    MessageBox.Show("Số điện thoại phải bắt đầu bằng số 0!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // kiểm tra email trùng lặp
+                if (_context.UserAccounts.Any(u => u.Email == txtLecturerEmail.Text.Trim() && u.UserId != selectedUser.UserId && u.Role == "lecturer"))
+                {
+                    MessageBox.Show("Email này đã được sử dụng!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (txtLecturerPhone.Text.Any(c => !char.IsDigit(c)))
+                {
+                    MessageBox.Show("Số điện thoại chỉ được chứa các chữ số!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (!txtLecturerEmail.Text.EndsWith("@fe.edu.vn"))
+                {
+                    MessageBox.Show("Định dạng mail example@fe.edu.vn", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (_context.UserAccounts.Any(u => u.PhoneNumber == txtLecturerPhone.Text.Trim() && u.UserId != selectedUser.UserId && u.Role == "lecturer"))
+                {
+                    MessageBox.Show("Số điện thoại này đã được sử dụng!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                selectedUser.FullName = txtLecturerName.Text.Trim();
+                selectedUser.Email = txtLecturerEmail.Text.Trim();
+                selectedUser.PhoneNumber = txtLecturerPhone.Text.Trim();
+                selectedUser.Birthdate = DateOnly.FromDateTime(dpLecturerBirthDate.SelectedDate!.Value);
+                
+                _context.UserAccounts.Update(selectedUser);
+                _context.SaveChanges();
+                LoadLecturers();
+                ClearLecturerFields();
+            }
         }
     }
 }
