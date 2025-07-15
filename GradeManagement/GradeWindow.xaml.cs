@@ -111,6 +111,7 @@ namespace GradeManagement
 
             LoadGradeViewModel();
             LoadDgCourses();
+            LoadSubjects();
         }
 
         private void LoadDgCourses()
@@ -120,10 +121,17 @@ namespace GradeManagement
            
         }
 
+        private void LoadSubjects()
+        {
+            dgSubjects.ItemsSource = _context.Subjects.ToList();   
+        }
+
         private void cbCourse_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             LoadGradeViewModel();
         }
+
+        
         private void LoadGradeViewModel()
         {
             if (cbCourses.SelectedItem is Course selectedCourse)
