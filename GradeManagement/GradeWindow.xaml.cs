@@ -1,8 +1,10 @@
 ﻿using GradeManagement.DAL.Models;
 using GradeManagement.DAL.ViewModels;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -472,6 +474,107 @@ namespace GradeManagement
 
         }
 
+        private void btnExport_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgStudentGrades.ItemsSource is List<GradeViewModel> studentList && studentList.Count > 0)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "CSV files (*.csv)|*.csv",
+                    FileName = "GradeExport.csv"
+                };
 
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    var lines = new List<string>();
+                    var headers = new List<string> { "RollNumber", "FullName" };
+
+                    // Thêm tên grade items vào header
+                    headers.AddRange(GradeItems.Select(g => g.GradeItemName)!);
+                    lines.Add(string.Join(",", headers));
+
+                    // Thêm dữ liệu từng sinh viên
+                    foreach (var student in studentList)
+                    {
+                        var values = new List<string> { student.RollNumber, student.FullName };
+                        foreach (var item in GradeItems)
+                        {
+                            student.GradeDetails.TryGetValue(item.GradeItemId, out var detail);
+                            values.Add(detail?.Mark?.ToString() ?? "");
+                        }
+                        lines.Add(string.Join(",", values));
+                    }
+
+                    File.WriteAllLines(saveFileDialog.FileName, lines);
+                    MessageBox.Show("Export thành công!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Không có dữ liệu để xuất!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void btnImport_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "CSV files (*.csv)|*.csv"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var lines = File.ReadAllLines(openFileDialog.FileName);
+                if (lines.Length < 2)
+                {
+                    MessageBox.Show("File không có dữ liệu!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var header = lines[0].Split(',');
+                var gradeItemNameIndex = header.Skip(2).ToList(); // Bỏ qua RollNumber và FullName
+
+                var gradeItemMap = GradeItems.ToDictionary(g => g.GradeItemName, g => g.GradeItemId);
+
+                for (int i = 1; i < lines.Length; i++)
+                {
+                    var cols = lines[i].Split(',');
+                    var rollNumber = cols[0].Trim();
+                    var student = _context.Students.FirstOrDefault(s => s.RollNumber == rollNumber);
+                    if (student == null) continue;
+
+                    var selectedCourse = cbCourses.SelectedItem as Course;
+                    var grade = _context.Grades.FirstOrDefault(g => g.StudentId == student.StudentId && g.CourseId == selectedCourse.CourseId);
+                    if (grade == null) continue;
+
+                    for (int j = 2; j < cols.Length; j++)
+                    {
+                        var gradeItemName = header[j].Trim();
+                        if (!gradeItemMap.TryGetValue(gradeItemName, out int gradeItemId)) continue;
+
+                        if (!double.TryParse(cols[j], out double markValue)) continue;
+
+                        var existingMark = _context.Marks.FirstOrDefault(m => m.GradeId == grade.GradeId && m.GradeItemId == gradeItemId);
+                        if (existingMark != null)
+                        {
+                            existingMark.Mark1 = markValue;
+                        }
+                        else
+                        {
+                            _context.Marks.Add(new Mark
+                            {
+                                GradeId = grade.GradeId,
+                                GradeItemId = gradeItemId,
+                                Mark1 = markValue
+                            });
+                        }
+                    }
+                }
+
+                _context.SaveChanges();
+                LoadGradeViewModel();
+                MessageBox.Show("Import thành công!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
     }
 }

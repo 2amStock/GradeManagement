@@ -15,11 +15,13 @@ public partial class Course
 
     public DateOnly? EndDate { get; set; }
 
+    public int? LecturerId { get; set; }
+
     public virtual ICollection<Grade> Grades { get; set; } = new List<Grade>();
+
+    public virtual UserAccount? Lecturer { get; set; }
 
     public virtual ICollection<StudentCourse> StudentCourses { get; set; } = new List<StudentCourse>();
 
     public virtual Subject Subject { get; set; } = null!;
-
-    public string DisplayName => $"{ClassCode} - {SubjectId}";
 }

@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace GradeManagement.DAL.Models;
 
@@ -32,16 +31,12 @@ public partial class GradeManagementSystemContext : DbContext
 
     public virtual DbSet<Subject> Subjects { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
+    public virtual DbSet<UserAccount> UserAccounts { get; set; }
 
-        var connectionString = configuration.GetConnectionString("DBDefault");
-        optionsBuilder.UseSqlServer(connectionString);
-    }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-D3T65A6;Database=GradeManagementSystem;User Id=sa;Password=123;TrustServerCertificate=true;Trusted_Connection=SSPI;Encrypt=false;");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Course>(entity =>
@@ -54,10 +49,15 @@ public partial class GradeManagementSystemContext : DbContext
             entity.Property(e => e.ClassCode)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+            entity.Property(e => e.LecturerId).HasColumnName("LecturerID");
             entity.Property(e => e.SubjectId)
                 .HasMaxLength(7)
                 .IsUnicode(false)
                 .HasColumnName("SubjectID");
+
+            entity.HasOne(d => d.Lecturer).WithMany(p => p.Courses)
+                .HasForeignKey(d => d.LecturerId)
+                .HasConstraintName("FK_Course_Lecturer");
 
             entity.HasOne(d => d.Subject).WithMany(p => p.Courses)
                 .HasForeignKey(d => d.SubjectId)
@@ -185,6 +185,21 @@ public partial class GradeManagementSystemContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("SubjectID");
             entity.Property(e => e.SubjectName).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<UserAccount>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("PK__UserAcco__1788CCACDF8B4CF8");
+
+            entity.ToTable("UserAccount");
+
+            entity.HasIndex(e => e.Email, "UQ__UserAcco__A9D10534E649C84E").IsUnique();
+
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.FullName).HasMaxLength(100);
+            entity.Property(e => e.PasswordHash).HasMaxLength(255);
+            entity.Property(e => e.Role).HasMaxLength(20);
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="GradeWindow" Height="450" Width="800" WindowStyle="SingleBorderWindow" WindowState="Maximized" Loaded="Window_Loaded">
     <Grid>
-        <TabControl x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged" Margin="10">
+        <TabControl  x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged" Margin="10">
 
             <TabItem Header="Quản lý điểm">
                 <Grid>
@@ -36,8 +36,11 @@
                             <!-- Các Label + TextBox sẽ được thêm động ở đây -->
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                            <Button x:Name="btnSave" Content="Save" Width="69" Height="30"  Background="#FFF11010" Margin="0,0,10,0" Click="btnSave_Click"/>
-                            <Button x:Name="btnRefesh" Content="Refesh" Width="69" Height="30"  Background="#FF14F1F1" Click="btnRefesh_Click"/>
+                            <Button x:Name="btnSave" Content="Save" Width="49" Height="20"  Background="#FFF11010" Margin="0,0,10,10" Click="btnSave_Click"/>
+                            <Button x:Name="btnExport" Content="Export" Width="49" Height="20" Margin="0,0,10,10" Click="btnExport_Click"/>
+                            <Button x:Name="btnImport" Content="Import" Width="49" Height="20" Margin="0,0,10,10" Click="btnImport_Click"/>
+                            <Button x:Name="btnRefesh" Content="Refesh" Width="49" Height="20"  Background="#FF14F1F1" Margin="0,0,10,10" Click="btnRefesh_Click"/>
+                            
 
                         </StackPanel>
                     </StackPanel>
@@ -93,6 +96,8 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
+
+           
 
         </TabControl>
     </Grid>
