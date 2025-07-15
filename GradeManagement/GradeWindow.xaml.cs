@@ -601,5 +601,68 @@ namespace GradeManagement
                 MessageBox.Show("Import thành công!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+
+        private void ButtonAddLecturer_Click(object sender, RoutedEventArgs e)
+        {
+            if(string.IsNullOrWhiteSpace(txtLecturerName.Text) || string.IsNullOrWhiteSpace(txtLecturerEmail.Text) || string.IsNullOrWhiteSpace(txtLecturerPhone.Text) || !dpLecturerBirthDate.SelectedDate.HasValue)
+            {
+                MessageBox.Show("Hãy nhập đầy đủ thông tin giảng viên!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if(txtLecturerPhone.Text.Length < 10 || txtLecturerPhone.Text.Length > 11)
+            {
+                MessageBox.Show("Số điện thoại phải có độ dài từ 10 đến 11 ký tự!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (txtLecturerName.Text.Any(c => !char.IsLetter(c) && c != ' '))
+            {
+                MessageBox.Show("Tên giảng viên chỉ được chứa các chữ cái và khoảng trắng!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!txtLecturerPhone.Text.StartsWith("0"))
+            {
+                MessageBox.Show("Số điện thoại phải bắt đầu bằng số 0!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // kiểm tra email trùng lặp
+            if (_context.UserAccounts.Any(u => u.Email == txtLecturerEmail.Text.Trim() && u.Role == "lecturer"))
+            {
+                MessageBox.Show("Email này đã được sử dụng!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (txtLecturerPhone.Text.Any(c => !char.IsDigit(c)))
+            {
+                MessageBox.Show("Số điện thoại chỉ được chứa các chữ số!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!txtLecturerEmail.Text.EndsWith("@fe.edu.vn"))
+            {
+                MessageBox.Show("Định dạng mail example@fe.edu.vn", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (_context.UserAccounts.Any(u => u.PhoneNumber == txtLecturerPhone.Text.Trim() && u.Role == "lecturer"))
+            {
+                MessageBox.Show("Sđt này đã được sử dụng!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            var newLecturer = new UserAccount
+            
+            {
+                FullName = txtLecturerName.Text.Trim(),
+                Email = txtLecturerEmail.Text.Trim(),
+                PhoneNumber = txtLecturerPhone.Text.Trim(),
+                Birthdate = DateOnly.FromDateTime(dpLecturerBirthDate.SelectedDate!.Value),
+                Role = "lecturer",
+                PasswordHash = "123456"
+            };
+
+            _context.UserAccounts.Add(newLecturer);
+            _context.SaveChanges();
+            LoadLecturers();
+        }
     }
 }
