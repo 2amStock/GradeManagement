@@ -707,6 +707,7 @@ namespace GradeManagement
             txtLecturerPhone.Text = string.Empty;
             dpLecturerBirthDate.SelectedDate = null;
             dgLecturers.SelectedItem = null;
+            txtSearchLecturer.Text = string.Empty;
             btnLecturer.Content = "Khóa tài khoản";
         }
 
@@ -807,6 +808,28 @@ namespace GradeManagement
             {
                 MessageBox.Show("chưa chọn gì", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+        }
+
+        private void ButtonSearchLecturer_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearchLecturer.Text))
+            {
+                dgLecturers.ItemsSource = _context.UserAccounts
+                    .Where(u => u.Role == "lecturer")
+                    .ToList();
+            }
+            else
+            {
+                string searchText = txtSearchLecturer.Text.Trim().ToLower();
+                dgLecturers.ItemsSource = _context.UserAccounts
+                    .Where(u => u.Role == "lecturer" && (u.FullName.ToLower().Contains(searchText) || u.Email.ToLower().Contains(searchText) || u.PhoneNumber!.Contains(searchText)))
+                    .ToList();
+            }
+        }
+        private void ButtonRefeshLecturer_Click(object sender, RoutedEventArgs e)
+        {
+            ClearLecturerFields();
+            LoadLecturers();
         }
     }
 }
