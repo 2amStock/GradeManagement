@@ -125,6 +125,7 @@ namespace GradeManagement
         private void LoadSubjects()
         {
             dgSubjects.ItemsSource = _context.Subjects.ToList();   
+            subjectCount.Content = $"{_context.Subjects.Count()}";
         }
 
         private void LoadLecturers()
@@ -132,6 +133,7 @@ namespace GradeManagement
             dgLecturers.ItemsSource = _context.UserAccounts
                 .Where(u => u.Role == "lecturer")
                 .ToList();
+            lecturerCount.Content = $"{_context.UserAccounts.Count(u => u.Role == "lecturer")}";
         }   
 
         private void cbCourse_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -831,5 +833,115 @@ namespace GradeManagement
             ClearLecturerFields();
             LoadLecturers();
         }
+
+        private void ClearSubjectTab()
+        {
+            txtSubjectId.Text = string.Empty;
+            txtSubjectName.Text = string.Empty;
+            txtCredits.Text = string.Empty;
+            dgSubjects.SelectedItem = null;
+            txtSearchSubject.Text = string.Empty;
+        }
+
+        private void ButtonAddSubject_Click(object sender, RoutedEventArgs e)
+        {
+            if(string.IsNullOrWhiteSpace(txtSubjectId.Text) || string.IsNullOrWhiteSpace(txtSubjectName.Text) || string.IsNullOrWhiteSpace(txtCredits.Text))
+            {
+                MessageBox.Show("Hãy nhập đầy đủ thông tin môn học!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (!int.TryParse(txtCredits.Text, out int credits) || credits <= 0)
+            {
+                MessageBox.Show("Số tín chỉ phải là một số nguyên dương!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            var newSubject = new Subject
+            {
+                SubjectId = txtSubjectId.Text.Trim(),
+                SubjectName = txtSubjectName.Text.Trim(),
+                Credit = credits
+            };
+            // Kiểm tra xem môn học đã tồn tại chưa
+            if (_context.Subjects.Any(s => s.SubjectId == newSubject.SubjectId))
+            {
+                MessageBox.Show("Môn học này đã tồn tại!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            _context.Subjects.Add(newSubject);
+            _context.SaveChanges();
+            LoadSubjects();
+            ClearSubjectTab();
+
+        }
+
+        private void dgSubjects_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(dgSubjects.SelectedItem is Subject selectedSubject)
+            {
+                txtSubjectId.Text = selectedSubject.SubjectId;
+                txtSubjectName.Text = selectedSubject.SubjectName;
+                txtCredits.Text = selectedSubject.Credit.ToString(); ;
+                txtSubjectId.IsReadOnly = true; // Chỉ cho phép chỉnh sửa tên và số tín chỉ, không cho phép chỉnh sửa mã môn học
+            }
+            else
+            {
+                txtSubjectId.Text = string.Empty;
+                txtSubjectName.Text = string.Empty;
+                txtCredits.Text = string.Empty;
+            }
+        }
+
+        private void ButtonUpdateSubject_Click(object sender, RoutedEventArgs e)
+        {
+            if(dgSubjects.SelectedItem is Subject selectedSubject)
+            {
+                if (string.IsNullOrWhiteSpace(txtSubjectId.Text) || string.IsNullOrWhiteSpace(txtSubjectName.Text) || string.IsNullOrWhiteSpace(txtCredits.Text))
+                {
+                    MessageBox.Show("Hãy nhập đầy đủ thông tin môn học!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (!int.TryParse(txtCredits.Text, out int credits) || credits <= 0)
+                {
+                    MessageBox.Show("Số tín chỉ phải là một số nguyên dương!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                
+                
+
+                selectedSubject.SubjectName = txtSubjectName.Text.Trim();
+                selectedSubject.Credit = credits;
+                _context.Subjects.Update(selectedSubject);
+                _context.SaveChanges();
+                LoadSubjects();
+                ClearSubjectTab();
+            }
+            else
+            {
+                MessageBox.Show("Hãy chọn một môn học để chỉnh sửa!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void ButtonSearchSubject_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearchSubject.Text))
+            {
+                dgSubjects.ItemsSource = _context.Subjects.ToList();
+            }
+            else
+            {
+                string searchText = txtSearchSubject.Text.Trim().ToLower();
+                dgSubjects.ItemsSource = _context.Subjects
+                    .Where(s => s.SubjectId.ToLower().Contains(searchText) || s.SubjectName!.ToLower().Contains(searchText))
+                    .ToList();
+            }
+        }
+
+
+        private void ButtonRefeshSubject_Click(object sender, RoutedEventArgs e)
+        {
+            ClearSubjectTab();
+            LoadSubjects();
+        }
+
     }
 }

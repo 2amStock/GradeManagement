@@ -144,32 +144,54 @@
                     </StatusBar>
                 </Grid>
             </TabItem>
+           
 
-            <!-- Tab4 quản lý môn học theo kì -->
-            <TabItem Header="Quản lý môn học theo">
+            <!-- Tab4 quản lý môn học-->
+            <TabItem Header="Quản lý môn học">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Horizontal" Margin="10">
-                        <Button Content="Thêm môn học" Width="120" Margin="5" />
-                        <Button Content="Sửa môn học" Width="120" Margin="5"/>
-                        <Button Content="Xóa môn học" Width="120" Margin="5" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+            
+                    <StackPanel>
+                        <Label Content="Thông tin môn học" Foreground="#FFF10F0F" FontWeight="Bold"></Label>
+                        <Label Content="Mã môn học"></Label>
+                        <TextBox x:Name="txtSubjectId"></TextBox>
+                        <Label Content="Tên môn học"></Label>
+                        <TextBox x:Name="txtSubjectName"></TextBox>
+                        <Label Content="Số tín chỉ"></Label>
+                        <TextBox x:Name="txtCredits"></TextBox>
                     </StackPanel>
-
-                    <DataGrid x:Name="dgSubjects" Grid.Row="1" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="10">
+                        <Button Content="Thêm môn học" Width="120" Margin="5" Click="ButtonAddSubject_Click" />
+                        <Button Content="Sửa môn học" Width="120" Margin="5" Click="ButtonUpdateSubject_Click" />
+                        
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                        <Label Content="Tìm kiếm:" Margin="10"/>
+                        <TextBox x:Name="txtSearchSubject" Width="200" Margin="10" />
+                        <Button Content="Tìm kiếm" Width="80" Margin="10" Click="ButtonSearchSubject_Click"/>
+                        <Button Content="Làm mới" Width="80" Margin="10" Click="ButtonRefeshSubject_Click"/>
+                    </StackPanel>
+                    <DataGrid x:Name="dgSubjects" Grid.Row="2"  Grid.ColumnSpan="2" Margin="10" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="dgSubjects_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="SubjectId" Binding="{Binding SubjectId}" Width="*"/>
                             <DataGridTextColumn Header="SubjectName" Binding="{Binding SubjectName}" Width="2*"/>
+                            <DataGridTextColumn Header="Credits" Binding="{Binding Credit}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <StatusBar Grid.Row="2">
+                    <StatusBar Grid.Row="3"  Grid.ColumnSpan="2">
                         <StatusBarItem Content="Số lượng môn học: " />
-                        <StatusBarItem x:Name="subjectCount" Content="0"/>
+                        <StatusBarItem x:Name="subjectCount" />
                     </StatusBar>
                 </Grid>
             </TabItem>
