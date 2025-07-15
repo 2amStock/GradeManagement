@@ -33,7 +33,6 @@
 
                         <TextBlock Text="Grade Details" FontSize="20" Width="240" Height="31" TextAlignment="Center" Background="#FF82C3FE"/>
                         <StackPanel x:Name="spGradeItemDetails" Margin="10" >
-                            <!-- Các Label + TextBox sẽ được thêm động ở đây -->
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                             <Button x:Name="btnSave" Content="Save" Width="49" Height="20"  Background="#FFF11010" Margin="0,0,10,10" Click="btnSave_Click"/>
@@ -57,8 +56,9 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-
+    
                     <StackPanel Orientation="Vertical" Margin="0 0 0 10">
+                        <Label Content="Thông tin điểm thành phần" Foreground="#FFF10F0F" FontWeight="Bold"></Label>
                         <TextBlock Text="Môn học (Subject):"/>
                         <ComboBox x:Name="cbSubjects"  Width="300" SelectionChanged="cbSubjects_SelectionChanged"/>
                     </StackPanel>
@@ -110,24 +110,37 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
-                        <Label Content="Class code"></Label>
-                        <TextBox x:Name="txtClassCode" Width="200" Margin="10"/>
-                        <Label Content="Môn học"></Label>
-                        <ComboBox x:Name="cbSubjectsForCourseManage" Width="200" Margin="10"/>
-                        <Label Content="Giảng viên"></Label>
-                        <ComboBox x:Name="cbLecturersForCourseManage" Width="200" Margin="10"/>
-                        <Label Content="Ngày bắt đầu"></Label>
-                        <DatePicker x:Name="dpStartDate" Width="200" Margin="10"/>
-                        <Label Content="Ngày kết thúc"></Label>
-                        <DatePicker x:Name="dpEndDate" Width="200" Margin="10"/>
-                    </StackPanel >
-                    <StackPanel Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal" Margin="10">
-                        <Button Content="Thêm khóa học" Width="120" Margin="5"/>
-                        <Button Content="Sửa khóa học" Width="120" Margin="5" />
-                        <Button Content="Xóa khóa học" Width="120" Margin="5" />
+                        <Label Content="Thông tin khóa học" Foreground="#FFF10F0F" FontWeight="Bold"></Label>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Width="90" Content="Class code"/>
+                            <TextBox x:Name="txtClassCode" Width="200" Margin="10"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Width="90" Content="Môn học"/>
+                            <ComboBox x:Name="cbSubjectsForCourseManage" Width="200" Margin="10"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Width="90" Content="Giảng viên" />
+                            <ComboBox x:Name="cbLecturersForCourseManage" Width="200" Margin="10"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Width="90" Content="Ngày bắt đầu"/>
+                            <DatePicker x:Name="dpStartDate" Width="200" Margin="10"/>
+                        </StackPanel>
+                        
                     </StackPanel>
-
-                    <DataGrid Grid.ColumnSpan="2" x:Name="dgCourses" Grid.Row="2" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
+                    <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Margin="10">
+                        <Button Content="Thêm khóa học" Width="100" Margin="5" Click="ButtonAddCourse_Click" />
+                        <Button Content="Sửa khóa học" Width="100" Margin="5" Click="ButtonUpdateCourse_Click" />
+                        <Button Content="Xóa khóa học" Width="100" Margin="5" Click="ButtonDeleteCourse_Click" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="10">
+                        <Label Content="Tìm kiếm:" Margin="10"/>
+                        <TextBox x:Name="txtSearchCourse" Width="200" Margin="10"/>
+                        <Button Content="Tìm kiếm" Width="80" Margin="10" Click="ButtonSearchCourse_Click"/>
+                        <Button Content="Làm mới" Width="80" Margin="10" Click="ButtonRefeshCourse_Click"/>
+                    </StackPanel>
+                    <DataGrid Grid.ColumnSpan="2" x:Name="dgCourses" Grid.Row="2" Margin="10" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="dgCourses_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="CourseID" Binding="{Binding CourseId}" Width="Auto"/>
                             <DataGridTextColumn Header="ClassCode" Binding="{Binding ClassCode}" Width="*"/>
@@ -137,7 +150,7 @@
                             <DataGridTextColumn Header="Lecturer Name" Binding="{Binding Lecturer.FullName}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
-
+                    
                     <StatusBar Grid.Row="3" Grid.ColumnSpan="2">
                         <StatusBarItem Content="Số lượng khóa học: " />
                         <StatusBarItem x:Name="courseCount" Content="0"/>

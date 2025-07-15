@@ -110,16 +110,29 @@ namespace GradeManagement
             dgGradeItems.SelectedItem = null;
 
             LoadGradeViewModel();
-            LoadDgCourses();
+            LoadCourses();
             LoadSubjects();
             LoadLecturers();
         }
 
-        private void LoadDgCourses()
+        private void LoadCourses()
         {
-           
+            cbLecturersForCourseManage.SelectedValuePath = "UserId";
+            cbLecturersForCourseManage.DisplayMemberPath = "FullName";
+            cbSubjectsForCourseManage.SelectedValuePath = "SubjectId";
+            cbSubjectsForCourseManage.DisplayMemberPath = "SubjectId";
             dgCourses.ItemsSource = _context.Courses.Include(c => c.Lecturer).ToList();
-           
+            cbSubjectsForCourseManage.ItemsSource = _context.Subjects
+                .ToList();
+
+            cbLecturersForCourseManage.ItemsSource = _context.UserAccounts
+                .Where(u => u.Role == "lecturer")
+                
+                .ToList();
+            
+            cbLecturersForCourseManage.SelectedIndex = 0;
+            cbSubjectsForCourseManage.SelectedIndex = 0;
+            courseCount.Content = $"{_context.Courses.Count()}";
         }
 
         private void LoadSubjects()
@@ -841,6 +854,7 @@ namespace GradeManagement
             txtCredits.Text = string.Empty;
             dgSubjects.SelectedItem = null;
             txtSearchSubject.Text = string.Empty;
+            txtSubjectId.IsReadOnly = false; // Cho phép chỉnh sửa mã môn học
         }
 
         private void ButtonAddSubject_Click(object sender, RoutedEventArgs e)
@@ -943,5 +957,90 @@ namespace GradeManagement
             LoadSubjects();
         }
 
+        
+
+        private void ButtonAddCourse_Click(object sender, RoutedEventArgs e)
+        {
+            if(string.IsNullOrWhiteSpace(txtClassCode.Text) || cbLecturersForCourseManage.SelectedItem == null || cbSubjectsForCourseManage.SelectedItem == null || !dpStartDate.SelectedDate.HasValue)
+            {
+                MessageBox.Show("Hãy nhập đầy đủ thông tin khóa học!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (_context.Courses.Any(c => c.ClassCode == txtClassCode.Text.Trim() && c.SubjectId == cbSubjectsForCourseManage.SelectedValue.ToString()))
+            {
+                MessageBox.Show("Môn học này đã có ở lớp này rồi", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            // Kiểm tra giáo viên có đang dạy môn học này không tức là giáo viên đã có khóa học nào đó với môn học này chưa
+            if (_context.Courses.Any(c => c.LecturerId == (int)cbLecturersForCourseManage.SelectedValue && c.SubjectId == cbSubjectsForCourseManage.SelectedValue.ToString()))
+            {
+                MessageBox.Show("Giảng viên này đã có khóa học với môn học này rồi", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            //Kiểm tra ngày bắt đầu khóa học không được trước ngày hiện tại và không được sau ngày kết thúc khóa học
+            if (dpStartDate.SelectedDate.Value.Date < DateTime.Now.Date)
+            {
+                MessageBox.Show("Ngày bắt đầu khóa học không được trước ngày hiện tại", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            Course course = new Course
+            {
+                ClassCode = txtClassCode.Text.Trim(),
+                SubjectId = cbSubjectsForCourseManage.SelectedValue.ToString()!,
+                StartDate = DateOnly.FromDateTime(dpStartDate.SelectedDate.Value),
+                LecturerId = (int)cbLecturersForCourseManage.SelectedValue,
+                EndDate = DateOnly.FromDateTime(dpStartDate.SelectedDate.Value).AddMonths(4)
+
+            };
+            _context.Courses.Add(course);
+            _context.SaveChanges();
+            LoadCourses();
+            MessageBox.Show(GetWindow(this), "Thêm khóa học thành công!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+
+        }
+
+        private void ButtonUpdateCourse_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ButtonDeleteCourse_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void dgCourses_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(dgCourses.SelectedItem is Course selectedCourse)
+            {
+                
+                txtClassCode.Text = selectedCourse.ClassCode;
+                cbLecturersForCourseManage.SelectedValue = selectedCourse.LecturerId;
+                cbSubjectsForCourseManage.SelectedValue = selectedCourse.SubjectId;
+                dpStartDate.SelectedDate = selectedCourse.StartDate.HasValue
+                    ? selectedCourse.StartDate.Value.ToDateTime(new TimeOnly(0, 0))
+                    : null;
+            }
+            else
+            {
+                
+                txtClassCode.Text = string.Empty;
+                cbLecturersForCourseManage.SelectedValue = null;
+                cbSubjectsForCourseManage.SelectedValue = null;
+                dpStartDate.SelectedDate = null;
+            }
+        }
+
+        private void ButtonSearchCourse_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void ButtonRefeshCourse_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
