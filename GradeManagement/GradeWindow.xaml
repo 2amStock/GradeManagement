@@ -96,8 +96,98 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
+            <TabItem Header="Quản lý khóa học">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-           
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <Button Content="Thêm khóa học" Width="120" Margin="5"/>
+                        <Button Content="Sửa khóa học" Width="120" Margin="5" />
+                        <Button Content="Xóa khóa học" Width="120" Margin="5" />
+                    </StackPanel>
+
+                    <DataGrid x:Name="dgCourses" Grid.Row="1" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="CourseID" Binding="{Binding CourseID}" Width="Auto"/>
+                            <DataGridTextColumn Header="ClassCode" Binding="{Binding ClassCode}" Width="*"/>
+                            <DataGridTextColumn Header="SubjectID" Binding="{Binding SubjectID}" Width="*"/>
+                            <DataGridTextColumn Header="StartDate" Binding="{Binding StartDate, StringFormat={}{0:dd/MM/yyyy}}" Width="*"/>
+                            <DataGridTextColumn Header="EndDate" Binding="{Binding EndDate, StringFormat={}{0:dd/MM/yyyy}}" Width="*"/>
+                            <DataGridTextColumn Header="LecturerID" Binding="{Binding LecturerID}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StatusBar Grid.Row="2">
+                        <StatusBarItem Content="Số lượng khóa học: " />
+                        <StatusBarItem x:Name="courseCount" Content="0"/>
+                    </StatusBar>
+                </Grid>
+            </TabItem>
+
+            <!-- Tab4 quản lý môn học theo kì -->
+            <TabItem Header="Quản lý môn học theo kì">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <Button Content="Thêm môn học" Width="120" Margin="5" />
+                        <Button Content="Sửa môn học" Width="120" Margin="5"/>
+                        <Button Content="Xóa môn học" Width="120" Margin="5" />
+                    </StackPanel>
+
+                    <DataGrid x:Name="dgSubjects" Grid.Row="1" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="SubjectID" Binding="{Binding SubjectID}" Width="*"/>
+                            <DataGridTextColumn Header="SubjectName" Binding="{Binding SubjectName}" Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StatusBar Grid.Row="2">
+                        <StatusBarItem Content="Số lượng môn học: " />
+                        <StatusBarItem x:Name="subjectCount" Content="0"/>
+                    </StatusBar>
+                </Grid>
+            </TabItem>
+
+            <!-- Tab5 Quản lí giáo viên -->
+            <TabItem Header="Quản lí giáo viên">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <Button Content="Thêm giáo viên" Width="120" Margin="5" />
+                        <Button Content="Sửa giáo viên" Width="120" Margin="5" />
+                        <Button Content="Xóa giáo viên" Width="120" Margin="5" />
+                    </StackPanel>
+
+                    <DataGrid x:Name="dgLecturers" Grid.Row="1" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="UserID" Binding="{Binding UserID}" Width="Auto"/>
+                            <DataGridTextColumn Header="FullName" Binding="{Binding FullName}" Width="2*"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
+                            <DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StatusBar Grid.Row="2">
+                        <StatusBarItem Content="Số lượng giáo viên: " />
+                        <StatusBarItem x:Name="lecturerCount" Content="0"/>
+                    </StatusBar>
+                </Grid>
+            </TabItem>
+
 
         </TabControl>
     </Grid>
