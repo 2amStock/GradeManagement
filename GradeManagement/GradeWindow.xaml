@@ -207,7 +207,7 @@
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10">
                         <Button Content="Thêm giáo viên" Width="120" Margin="5" Click="ButtonAddLecturer_Click" />
                         <Button Content="Sửa giáo viên" Width="120" Margin="5"  Click="ButtonUpdateLecturer_Click"/>
-                        <Button Content="Xóa giáo viên" Width="120" Margin="5" />
+                        <Button x:Name="btnLecturer" Content="Khóa tài khoản" Width="120" Margin="5" Click="ButtonDeleteLecturer_Click" />
                     </StackPanel>
 
                     <DataGrid x:Name="dgLecturers" Grid.Row="2" Grid.ColumnSpan="2" Margin="10" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" SelectionChanged="dgLecturers_SelectionChanged">

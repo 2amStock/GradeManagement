@@ -671,12 +671,25 @@ namespace GradeManagement
         {
             if (dgLecturers.SelectedItem is UserAccount selectedLecturer)
             {
+
                 txtLecturerName.Text = selectedLecturer.FullName;
                 txtLecturerEmail.Text = selectedLecturer.Email;
                 txtLecturerPhone.Text = selectedLecturer.PhoneNumber;
                 dpLecturerBirthDate.SelectedDate = selectedLecturer.Birthdate.HasValue
                     ? selectedLecturer.Birthdate.Value.ToDateTime(new TimeOnly(0, 0))
                     : null;
+                if (selectedLecturer.Status.Equals("Hoạt động"))
+                {
+                    btnLecturer.Content = "Khóa tài khoản";
+                }
+                else if (selectedLecturer.Status.Equals("Không hoạt động"))
+                {
+                    btnLecturer.Content = "Khôi phục tài khoản";
+                }
+                else
+                {
+                    btnLecturer.Content = "Khóa tài khoản";
+                }
             }
             else
             {
@@ -694,6 +707,7 @@ namespace GradeManagement
             txtLecturerPhone.Text = string.Empty;
             dpLecturerBirthDate.SelectedDate = null;
             dgLecturers.SelectedItem = null;
+            btnLecturer.Content = "Khóa tài khoản";
         }
 
         private void ButtonUpdateLecturer_Click(object sender, RoutedEventArgs e)
@@ -755,6 +769,43 @@ namespace GradeManagement
                 _context.SaveChanges();
                 LoadLecturers();
                 ClearLecturerFields();
+            }
+        }
+
+        private void ButtonDeleteLecturer_Click(object sender, RoutedEventArgs e)
+        {
+            if(dgLecturers.SelectedItem is UserAccount selectedUser)
+            {
+                if (selectedUser.Status.Equals("Hoạt động"))
+                {
+                    
+                    var confirmResult = MessageBox.Show("Bạn có chắc chắn muốn khóa giảng viên này không?", "Xác nhận khóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (confirmResult == MessageBoxResult.Yes)
+                    {
+                        selectedUser.Status = "Không hoạt động";
+                        _context.UserAccounts.Update(selectedUser);
+                        _context.SaveChanges();
+                        LoadLecturers();
+                        ClearLecturerFields();
+                    }
+                }
+                else if (selectedUser.Status.Equals("Không hoạt động"))
+                {
+                    var confirmResult = MessageBox.Show("Bạn có chắc chắn muốn khôi phục giảng viên này không?", "Xác nhận khôi phục", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (confirmResult == MessageBoxResult.Yes)
+                    {
+                        selectedUser.Status = "Hoạt động";
+                        _context.UserAccounts.Update(selectedUser);
+                        _context.SaveChanges();
+                        LoadLecturers();
+                        ClearLecturerFields();
+                    }
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("chưa chọn gì", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }
