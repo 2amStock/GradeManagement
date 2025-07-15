@@ -58,7 +58,28 @@ namespace GradeManagement
                 if (selectedTab2.Header.ToString() == "Quản lý điểm thành phần")
                 {
                     
-                    ClearGradeItemFields();
+                    LoadGradeItemsTabs();
+                }
+            }
+            if (e.Source is TabControl && tabControl.SelectedItem is TabItem selectedTab3)
+            {
+                if (selectedTab3.Header.ToString() == "Quản lý khóa học")
+                {
+                    LoadCourses();
+                }
+            }
+            if (e.Source is TabControl && tabControl.SelectedItem is TabItem selectedTab4)
+            {
+                if (selectedTab4.Header.ToString() == "Quản lý môn học")
+                {
+                    LoadSubjects();
+                }
+            }
+            if (e.Source is TabControl && tabControl.SelectedItem is TabItem selectedTab5)
+            {
+                if (selectedTab5.Header.ToString() == "Quản lý giảng viên")
+                {
+                    LoadLecturers();
                 }
             }
         }
@@ -97,18 +118,13 @@ namespace GradeManagement
             cbCourses.SelectedValuePath = "CourseId";
             cbCourses.DisplayMemberPath = "DisplayName";
             cbCourses.ItemsSource = _context.Courses.ToList();
-            cbSubjects.SelectedValuePath = "SubjectId";
-            cbSubjects.DisplayMemberPath = "SubjectId";
-            cbSubjects.ItemsSource = _context.Subjects.ToList();
-            cbCategorys.SelectedValuePath = "GradeCategoryId";
-            cbCategorys.DisplayMemberPath = "GradeCategoryName";
-            cbCategorys.ItemsSource = _context.GradeCategories.ToList();
+            
+            
             cbCourses.SelectedIndex = 0;
-            cbSubjects.SelectedIndex = 0;
-            cbCategorys.SelectedIndex = 0;
+            
             dgStudentGrades.SelectedItem = null;
-            dgGradeItems.SelectedItem = null;
-
+            
+            LoadGradeItemsTabs();
             LoadGradeViewModel();
             LoadCourses();
             LoadSubjects();
@@ -118,7 +134,7 @@ namespace GradeManagement
         private void LoadCourses()
         {
             cbLecturersForCourseManage.SelectedValuePath = "UserId";
-            cbLecturersForCourseManage.DisplayMemberPath = "FullName";
+            cbLecturersForCourseManage.DisplayMemberPath = "DisplayName";
             cbSubjectsForCourseManage.SelectedValuePath = "SubjectId";
             cbSubjectsForCourseManage.DisplayMemberPath = "SubjectId";
             dgCourses.ItemsSource = _context.Courses.Include(c => c.Lecturer).ToList();
@@ -501,6 +517,20 @@ namespace GradeManagement
 
         }
 
+        private void LoadGradeItemsTabs()
+        {
+            cbSubjects.SelectedValuePath = "SubjectId";
+            cbSubjects.DisplayMemberPath = "SubjectId";
+            cbSubjects.ItemsSource = _context.Subjects.ToList();
+            cbCategorys.SelectedValuePath = "GradeCategoryId";
+            cbCategorys.DisplayMemberPath = "GradeCategoryName";
+            cbCategorys.ItemsSource = _context.GradeCategories.ToList();
+            
+            cbSubjects.SelectedIndex = 0;
+            cbCategorys.SelectedIndex = 0;
+
+            dgGradeItems.SelectedItem = null;
+        }
         public void ClearGradeItemFields()
         {
             txtGradeItemName.Text = string.Empty;
@@ -511,7 +541,7 @@ namespace GradeManagement
         private void btnRefeshGradeItem_Click(object sender, RoutedEventArgs e)
         {
             ClearGradeItemFields();
-
+            
         }
 
         private void btnExport_Click(object sender, RoutedEventArgs e)
@@ -1004,12 +1034,82 @@ namespace GradeManagement
 
         private void ButtonUpdateCourse_Click(object sender, RoutedEventArgs e)
         {
+            if (dgCourses.SelectedItem is Course selectedCourse)
+            {
+                if (string.IsNullOrWhiteSpace(txtClassCode.Text) || cbLecturersForCourseManage.SelectedItem == null || cbSubjectsForCourseManage.SelectedItem == null || !dpStartDate.SelectedDate.HasValue)
+                {
+                    MessageBox.Show("Hãy nhập đầy đủ thông tin khóa học!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (_context.Courses.Any(c => c.ClassCode == txtClassCode.Text.Trim() && c.SubjectId == cbSubjectsForCourseManage.SelectedValue.ToString() && c.CourseId != selectedCourse.CourseId))
+                {
+                    MessageBox.Show("Môn học này đã có ở lớp này rồi", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                // Kiểm tra giáo viên có đang dạy môn học này không tức là giáo viên đã có khóa học nào đó với môn học này chưa
+                if (_context.Courses.Any(c => c.LecturerId == (int)cbLecturersForCourseManage.SelectedValue && c.SubjectId == cbSubjectsForCourseManage.SelectedValue.ToString() && c.CourseId != selectedCourse.CourseId))
+                {
+                    MessageBox.Show("Giảng viên này đã có khóa học với môn học này rồi", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                //Kiểm tra ngày bắt đầu khóa học không được trước ngày hiện tại và không được sau ngày kết thúc khóa học
+                if (dpStartDate.SelectedDate.Value.Date < DateTime.Now.Date)
+                {
+                    MessageBox.Show("Ngày bắt đầu khóa học không được trước ngày hiện tại", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                selectedCourse.ClassCode = txtClassCode.Text.Trim();
+                selectedCourse.SubjectId = cbSubjectsForCourseManage.SelectedValue.ToString()!;
+                selectedCourse.StartDate = DateOnly.FromDateTime(dpStartDate.SelectedDate.Value);
+                selectedCourse.LecturerId = (int)cbLecturersForCourseManage.SelectedValue;
+                selectedCourse.EndDate = DateOnly.FromDateTime(dpStartDate.SelectedDate.Value).AddMonths(4);
+                _context.Courses.Update(selectedCourse);
+                _context.SaveChanges();
 
+                LoadCourses();
+
+                MessageBox.Show(GetWindow(this), "Cập nhật khóa học thành công!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Hãy chọn một khóa học để chỉnh sửa!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
+            
+            
 
         private void ButtonDeleteCourse_Click(object sender, RoutedEventArgs e)
         {
+            if(dgCourses.SelectedItem is Course selectedCourse)
+            {
 
+                
+                var confirmResult = MessageBox.Show("Bạn có chắc chắn muốn xóa khóa học này không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (confirmResult == MessageBoxResult.Yes)
+                {
+                    // Xóa tất cả các điểm liên quan đến khóa học này 
+                    var relatedGrades = _context.Grades.Where(g => g.CourseId == selectedCourse.CourseId).ToList();
+                    foreach (var grade in relatedGrades)
+                    {
+                        // Xóa tất cả các điểm thành phần liên quan đến khóa học này
+                        var relatedMarks = _context.Marks.Where(m => m.GradeId == grade.GradeId).ToList();
+                        _context.Marks.RemoveRange(relatedMarks);
+                    }
+
+
+                    //xóa studett course liên quan đến khóa học này
+                    var relatedStudentCourses = _context.StudentCourses.Where(sc => sc.CourseId == selectedCourse.CourseId).ToList();
+                    _context.StudentCourses.RemoveRange(relatedStudentCourses);
+                    _context.Courses.Remove(selectedCourse);
+                    _context.SaveChanges();
+                    LoadCourses();
+                    MessageBox.Show("Đã xóa khóa học thành công.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Hãy chọn một khóa học để xóa!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void dgCourses_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1036,11 +1136,48 @@ namespace GradeManagement
 
         private void ButtonSearchCourse_Click(object sender, RoutedEventArgs e)
         {
-
+            if (string.IsNullOrWhiteSpace(txtSearchCourse.Text))
+            {
+                dgCourses.ItemsSource = _context.Courses.ToList();
+            }
+            else
+            {
+                string searchText = txtSearchCourse.Text.Trim().ToLower();
+                dgCourses.ItemsSource = _context.Courses
+                    .Where(c => c.ClassCode.ToLower().Contains(searchText)  || c.Lecturer!.Email.ToLower().Contains(searchText) || c.Lecturer!.FullName.ToLower().Contains(searchText))
+                    .ToList();
+            }
         }
         private void ButtonRefeshCourse_Click(object sender, RoutedEventArgs e)
         {
+            ClearCourseFields();
+            LoadCourses();
+        }
 
+        private void ClearCourseFields()
+        {
+            txtClassCode.Text = string.Empty;
+            cbLecturersForCourseManage.SelectedValue = 0;
+            cbSubjectsForCourseManage.SelectedValue = 0;
+            dpStartDate.SelectedDate = null;
+            dgCourses.SelectedItem = null;
+            txtSearchCourse.Text = string.Empty;
+        }
+
+        private void ButtonBack_Click(object sender, RoutedEventArgs e)
+        {
+            
+            StudentWindow studentWindow = new StudentWindow();
+            studentWindow.Show();
+            this.Close();
+        }
+
+        private void ButtonLogout_Click(object sender, RoutedEventArgs e)
+        {
+            
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.Show();
+            this.Close();
         }
     }
 }

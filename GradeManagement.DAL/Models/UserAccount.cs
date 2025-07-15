@@ -21,4 +21,6 @@ public partial class UserAccount
 
     public string? Status { get; set; }
     public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
+
+    public string DisplayName => $"{FullName} - {Email}";
 }

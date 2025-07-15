@@ -7,7 +7,11 @@
         mc:Ignorable="d"
         Title="GradeWindow" Height="450" Width="800" WindowStyle="SingleBorderWindow" WindowState="Maximized" Loaded="Window_Loaded">
     <Grid>
-        <TabControl  x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged" Margin="10">
+        <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+    <TabControl  x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged" Margin="10">
 
             <TabItem Header="Quản lý điểm">
                 <Grid>
@@ -147,7 +151,7 @@
                             <DataGridTextColumn Header="SubjectID" Binding="{Binding SubjectId}" Width="*"/>
                             <DataGridTextColumn Header="StartDate" Binding="{Binding StartDate, StringFormat={}{0:dd/MM/yyyy}}" Width="*"/>
                             <DataGridTextColumn Header="EndDate" Binding="{Binding EndDate, StringFormat={}{0:dd/MM/yyyy}}" Width="*"/>
-                            <DataGridTextColumn Header="Lecturer Name" Binding="{Binding Lecturer.FullName}" Width="*"/>
+                            <DataGridTextColumn Header="Lecturer Name" Binding="{Binding Lecturer.DisplayName}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     
@@ -266,5 +270,10 @@
 
 
         </TabControl>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Quay lại" Width="100" Margin="5" Click="ButtonBack_Click"/>
+            <Button Content="Logout" Width="100" Margin="5" Click="ButtonLogout_Click"/>
+        </StackPanel>
     </Grid>
+    
 </Window>

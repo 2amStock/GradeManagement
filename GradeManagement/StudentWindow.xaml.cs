@@ -132,6 +132,13 @@ namespace GradeManagement
             gradeWindow.Show();
             this.Close();
         }
+
+        private void Bt_StudentGrade_Click(object sender, RoutedEventArgs e)
+        {
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.Show();
+            this.Close();
+        }
     }
 }
 
