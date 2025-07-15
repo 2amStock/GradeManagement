@@ -112,6 +112,7 @@ namespace GradeManagement
             LoadGradeViewModel();
             LoadDgCourses();
             LoadSubjects();
+            LoadLecturers();
         }
 
         private void LoadDgCourses()
@@ -125,6 +126,13 @@ namespace GradeManagement
         {
             dgSubjects.ItemsSource = _context.Subjects.ToList();   
         }
+
+        private void LoadLecturers()
+        {
+            dgLecturers.ItemsSource = _context.UserAccounts
+                .Where(u => u.Role == "lecturer")
+                .ToList();
+        }   
 
         private void cbCourse_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

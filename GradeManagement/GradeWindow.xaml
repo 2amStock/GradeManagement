@@ -162,7 +162,7 @@
 
                     <DataGrid x:Name="dgSubjects" Grid.Row="1" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="SubjectID" Binding="{Binding SubjectID}" Width="*"/>
+                            <DataGridTextColumn Header="SubjectId" Binding="{Binding SubjectId}" Width="*"/>
                             <DataGridTextColumn Header="SubjectName" Binding="{Binding SubjectName}" Width="2*"/>
                         </DataGrid.Columns>
                     </DataGrid>
@@ -191,7 +191,7 @@
 
                     <DataGrid x:Name="dgLecturers" Grid.Row="1" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="UserID" Binding="{Binding UserID}" Width="Auto"/>
+                            <DataGridTextColumn Header="UserID" Binding="{Binding UserId}" Width="Auto"/>
                             <DataGridTextColumn Header="FullName" Binding="{Binding FullName}" Width="2*"/>
                             <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
                             <DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="*"/>
