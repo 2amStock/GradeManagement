@@ -50,7 +50,7 @@ namespace GradeManagement
                 }
                 else if (userAccount.Role.Equals("lecturer"))
                 {
-                    MainWindow mainWindow = new MainWindow();
+                    MainWindow mainWindow = new MainWindow(userAccount);
                     mainWindow.Show();
                     this.Close();
                 } 

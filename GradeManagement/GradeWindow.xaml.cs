@@ -86,31 +86,7 @@ namespace GradeManagement
 
 
 
-        private void GenerateGradeItemColumns(List<GradeItem> gradeItems)
-        {
-            while (dgStudentGrades.Columns.Count > 2)
-                dgStudentGrades.Columns.RemoveAt(2);
-
-            foreach (var item in gradeItems)
-            {
-                var column = new DataGridTextColumn
-                {
-                    Header = item.GradeItemName,
-                    Binding = new Binding($"GradeDetails[{item.GradeItemId}].Mark"),
-                    IsReadOnly = false
-                };
-
-                column.ElementStyle = new Style(typeof(TextBlock));
-                column.ElementStyle.Setters.Add(new Setter(ToolTipProperty,
-                    new Binding($"GradeDetails[{item.GradeItemId}].Weight")
-                    {
-                        StringFormat = "Weight: {0}%"
-                    }));
-
-                dgStudentGrades.Columns.Add(column);
-            }
-        }
-
+       
 
 
         public void Begin()
@@ -170,7 +146,32 @@ namespace GradeManagement
             LoadGradeViewModel();
         }
 
-        
+        private void GenerateGradeItemColumns(List<GradeItem> gradeItems)
+        {
+            while (dgStudentGrades.Columns.Count > 2)
+                dgStudentGrades.Columns.RemoveAt(2);
+
+            foreach (var item in gradeItems)
+            {
+                var column = new DataGridTextColumn
+                {
+                    Header = item.GradeItemName,
+                    Binding = new Binding($"GradeDetails[{item.GradeItemId}].Mark"),
+                    IsReadOnly = false
+                };
+
+                column.ElementStyle = new Style(typeof(TextBlock));
+                column.ElementStyle.Setters.Add(new Setter(ToolTipProperty,
+                    new Binding($"GradeDetails[{item.GradeItemId}].Weight")
+                    {
+                        StringFormat = "Weight: {0}%"
+                    }));
+
+                dgStudentGrades.Columns.Add(column);
+            }
+        }
+
+
         private void LoadGradeViewModel()
         {
             if (cbCourses.SelectedItem is Course selectedCourse)

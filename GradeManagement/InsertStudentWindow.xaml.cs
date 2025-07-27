@@ -37,7 +37,7 @@ namespace GradeManagement
             _context = new GradeManagementSystemContext();
             StudentWindow = studentWindow;
             _subjects = new ObservableCollection<SelectableSubject>();
-            capacity = 6; // số lượng + 1 trong 1 khóa học
+            capacity = 30; // số lượng + 1 trong 1 khóa học
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

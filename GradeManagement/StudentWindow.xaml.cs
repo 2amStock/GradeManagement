@@ -66,7 +66,7 @@ namespace GradeManagement
         
         private void Button_Click_Addnew(object sender, RoutedEventArgs e)
         {
-            if (btNewStudent.Content.ToString() == "ADD NEW STUDENT")
+            if (btNewStudent.Content.ToString().Contains("ADD NEW STUDENT"))
             {
                 if (cnt == 0 || !InsertStudentWindow.IsVisible)
                 {

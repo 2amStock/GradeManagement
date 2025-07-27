@@ -271,7 +271,7 @@
 
         </TabControl>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-            <Button Content="Quay lại" Width="100" Margin="5" Click="ButtonBack_Click"/>
+            <Button Content="Back to Home" Width="100" Margin="5" Click="ButtonBack_Click"/>
             <Button Content="Logout" Width="100" Margin="5" Click="ButtonLogout_Click"/>
         </StackPanel>
     </Grid>
